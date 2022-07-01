@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMotor : MonoBehaviour
@@ -29,8 +27,8 @@ public class CameraMotor : MonoBehaviour
             else delta.y = deltaY + boundY;
         }
 
-        transform.position += new Vector3(delta.x, delta.y,0);
-        
+        transform.position += new Vector3(delta.x, delta.y, 0);
+
 
     }
 }

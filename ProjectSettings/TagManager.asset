@@ -15,7 +15,7 @@ TagManager:
   - 
   - Blocking
   - Actor
-  - 
+  - Interactable
   - 
   - 
   - 
@@ -46,4 +46,10 @@ TagManager:
     locked: 0
   - name: Actor
     uniqueID: 3708530103
+    locked: 0
+  - name: Blocking
+    uniqueID: 2014478901
+    locked: 0
+  - name: Interactable
+    uniqueID: 3130426855
     locked: 0
