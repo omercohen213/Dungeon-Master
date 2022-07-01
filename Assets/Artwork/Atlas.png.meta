@@ -536,7 +536,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: floor_0
+      name: floor_1
       rect:
         serializedVersion: 2
         x: 32
@@ -552,6 +552,69 @@ TextureImporter:
       bones: []
       spriteID: d7cadec4b02a1c147b4cfe8eb4af54e7
       internalID: -2016727807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chest_full
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 32
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51ca3478aa521fd48b057231c62baa97
+      internalID: -1399949577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chest_empty
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 48
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.51122856, y: 0.5224581}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe7e1047ef35acd4abfad1516344ebd7
+      internalID: 858002449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 112
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 090743fb0464dc848a424c26373e7087
+      internalID: 1814555755
       vertices: []
       indices: 
       edges: []
@@ -576,20 +639,23 @@ TextureImporter:
       background_0: 610425331
       Atlas_3: -1039383881
       wall_1: -869140342
+      portal: 1814555755
       pillar_2: 38833769
       player_0: 1338075760
       wall_3: 76785506
       wall_5: -120887717
       Atlas_1: 1497491027
+      floor_1: -2016727807
       wall_4: -1947200434
+      chest_full: -1399949577
       fountain_0: 488126174
       stairs_2: -563557220
       floor_2: -221016240
       stairs_3: -1869298987
       pillar_0: 1186164313
       fountain_1: 1904095119
+      chest_empty: 858002449
       fountain_2: -2133699693
-      floor_0: -2016727807
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
