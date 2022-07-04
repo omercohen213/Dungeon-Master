@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        // to avoid creating two gameManagers
         if (GameManager.instance != null)
         {
             Destroy(gameObject);
@@ -16,7 +17,7 @@ public class GameManager : MonoBehaviour
 
         instance = this;
         SceneManager.sceneLoaded += LoadState;
-        DontDestroyOnLoad(gameObject);  
+        DontDestroyOnLoad(gameObject); 
     }
     //Resources
     public List<Sprite> playerSprites;
@@ -29,9 +30,17 @@ public class GameManager : MonoBehaviour
 
     //public weapon
 
-    //Logic
+    //logic
     public int gold;
     public int xp;
+
+    //floating text
+    public FloatingTextManager floatingTextManager;
+
+    public void ShowText(string text, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
+    {
+        floatingTextManager.Show(text, fontSize, color, position, motion, duration );
+    }
 
     /* preferedSkin
      * gold 

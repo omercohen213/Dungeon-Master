@@ -607,7 +607,7 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -615,6 +615,132 @@ TextureImporter:
       bones: []
       spriteID: 090743fb0464dc848a424c26373e7087
       internalID: 1814555755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: weapon_0
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 224
+        width: 10
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4614812d6c3b790459f24fe64ebef484
+      internalID: 112909143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: weapon_1
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 224
+        width: 10
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5bdf18b685f11b04480522d1566af4f3
+      internalID: 269156728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: weapon_2
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 224
+        width: 10
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34fb761ff51a55948876562931aa2e20
+      internalID: -1441059965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: weapon_3
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 224
+        width: 10
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d50c6f2f69ffc244dbeefa0342047637
+      internalID: 1485112418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: weapon_4
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 193
+        width: 10
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d56e4385914c274d8a6d42f0299e814
+      internalID: 1984216572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_0
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 63
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f19a8431d4962294d9dc2502107b1f36
+      internalID: 1937455646
       vertices: []
       indices: 
       edges: []
@@ -632,7 +758,10 @@ TextureImporter:
     nameFileIdTable:
       player_1: 1541401212
       pillar_1: 932114942
+      weapon_0: 112909143
+      weapon_1: 1497491027
       stairs_0: -1746876656
+      weapon_2: -1441059965
       wall_2: 314209820
       stairs_1: -306914370
       wall_: 606768608
@@ -644,13 +773,15 @@ TextureImporter:
       player_0: 1338075760
       wall_3: 76785506
       wall_5: -120887717
-      Atlas_1: 1497491027
       floor_1: -2016727807
       wall_4: -1947200434
       chest_full: -1399949577
       fountain_0: 488126174
       stairs_2: -563557220
+      weapon_4: 1984216572
       floor_2: -221016240
+      enemy_0: 1937455646
+      weapon_3: 1485112418
       stairs_3: -1869298987
       pillar_0: 1186164313
       fountain_1: 1904095119

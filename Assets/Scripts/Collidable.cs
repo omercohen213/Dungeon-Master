@@ -21,6 +21,7 @@ public class Collidable : MonoBehaviour
                 continue;
             OnCollide(hits[i]);
 
+            // Array is not cleaned up so we do it by ourselves
             hits[i] = null;
 
         }
