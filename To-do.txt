@@ -1,0 +1,22 @@
+*****to-do List*****
+
+Fix:
+- weapon damage for each weapon seperately
+- xp system
+- ability dmg immunity
+- 3rd scene load bug
+- enemy movement
+- too many public variables
+- save player stats
+- can remove AA from abilities (?)
+- not allowed to use two different abilities at the same time
+
+ADD:
+- ability on cd sound
+- enemy damage xp share
+- edit level1
+- player sprite
+- quest on npc
+- respawn enemy
+- enemy drops
+

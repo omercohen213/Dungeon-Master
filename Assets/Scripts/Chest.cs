@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Chest : Collectable
 {
+    [SerializeField] private Player player;
+    [SerializeField] private HUD hud;
     public Sprite emptyChest;
     public int goldAmount = 10;
     protected override void OnCollect()
@@ -10,7 +12,8 @@ public class Chest : Collectable
         {
             collected = true;
             GetComponent<SpriteRenderer>().sprite = emptyChest;
-            GameManager.instance.gold += goldAmount;
+            player.SetGold(player.GetGold() + goldAmount);
+            hud.onGoldChange();
             GameManager.instance.ShowText("+" + goldAmount + " gold!", 20, Color.yellow, transform.position, Vector3.up * 20, 0.5f);
         }
     }

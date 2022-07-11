@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Enemy : MovingEntity
 {
+
     // XP
-    public int xpValue = 10;
+    [SerializeField] private int xpValue = 10;
+    [SerializeField] private Player player;
 
     // Logic
     public float triggerLength = 1;
@@ -33,9 +35,7 @@ public class Enemy : MovingEntity
     }
 
     private void FixedUpdate()
-    {
-        
-
+    {      
         // Is player in chasing range?
         if (Vector3.Distance(startingPos, playerTransform.position) < chaseLength)
         {
@@ -61,6 +61,7 @@ public class Enemy : MovingEntity
 
         // Check for overlaps
         collidingWithPlayer = false;
+
         // Collision work
         boxCollider.OverlapCollider(filter, hits);
         for (int i = 0; i < hits.Length; i++)
@@ -80,7 +81,7 @@ public class Enemy : MovingEntity
     protected override void Death()
     {
         Destroy(gameObject);
-        GameManager.instance.xp += xpValue;
+        player.GrantXp(xpValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 20, Color.magenta, transform.position, Vector3.up * 40, 1.0f);
         
     }

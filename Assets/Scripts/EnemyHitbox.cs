@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class EnemyHitbox : Collidable
 {
     // Damage
-    public int damage;
+    public int damage= 10;
     public float pushForce;
 
     protected override void OnCollide(Collider2D coll)

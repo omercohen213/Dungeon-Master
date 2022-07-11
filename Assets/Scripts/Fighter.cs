@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Fighter : MonoBehaviour
 {
-    public int hp = 10;
-    public int maxHp = 10;
-    public float pushTolerance = 0.2f;
+    [SerializeField] protected int hp = 100;
+    [SerializeField] protected int maxHp = 100;
+    [SerializeField] protected float pushTolerance = 0.2f;
 
     // Immunity 
     protected float immuneTime = 1.0f;
@@ -17,6 +17,7 @@ public class Fighter : MonoBehaviour
 
     protected virtual void RecieveDamage(Damage dmg)
     {
+        //if (Weapon.instance.)
         if (Time.time - lastImmune > immuneTime)
         {
             lastImmune = Time.time;
