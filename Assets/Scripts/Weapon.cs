@@ -1,46 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Weapon : Collidable
 {
     // Damage structure
-    public int damage= 1;
+    public int [] damage= { 10, 20, 30, 40, 50 };
     public float pushForce = 2.0f;
 
     // Upgrade
-    public int weaponLvl = 1;
-    private SpriteRenderer spriteRenderer;
-
-    // Swing
-    private float cooldown = 0.5f; //time between attacks
-    private float lastSwing;
-
-    protected override void Start()
-    {
-        base.Start();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        // Swing the weapon when not on cooldown
-        if (Input.GetKeyDown(KeyCode.Space))
-            if (Time.time - lastSwing > cooldown)
-            {
-                lastSwing = Time.time;
-                Swing();
-            }
-        /* Change weapon when pressing on numbers
-        if (Input.GetKeyUp(KeyCode.Keypad1))
-        {
-
-        }
-        */
-        
-    }
+    public int weaponLvl = 0;
+    public SpriteRenderer spriteRenderer;
 
     // On hit
     protected override void OnCollide(Collider2D coll)
@@ -54,7 +25,7 @@ public class Weapon : Collidable
             Damage dmg = new Damage
             {
                 origin = transform.position,
-                dmgAmount = damage,
+                dmgAmount = damage[weaponLvl],
                 pushForce = pushForce
 
             };
@@ -62,9 +33,18 @@ public class Weapon : Collidable
         }
     }
 
-    // Swinging animation and change boxCollider position 
-    private void Swing()
+    public void UpgradeWeapon()
     {
-        Debug.Log("swing");
+        weaponLvl++;
+        spriteRenderer.sprite = GameManager.instance.weaponSprites[weaponLvl];
     }
+
+    public void SetWeaponLvl(int lvl)
+    {
+        weaponLvl = lvl;
+        spriteRenderer.sprite = GameManager.instance.weaponSprites[weaponLvl];
+
+    }
+
+
 }
