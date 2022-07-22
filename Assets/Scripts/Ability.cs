@@ -7,11 +7,11 @@ public class Ability: MonoBehaviour
     public string abilityName;
     public float cd;
     public float cdTimer= 0;
-    public bool isAbilityCd = false;
+    public bool isCd = false;
     public float castTime;
     public float castTimer= 0;
-    public bool isAbilityOnCast= false;
 
     public Image abilityCdImage;
-    public Text abilityCdText;  
+    public Text abilityCdText;
+
 }

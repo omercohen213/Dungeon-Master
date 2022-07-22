@@ -1,22 +1,22 @@
 *****to-do List*****
 
 Fix:
-- weapon damage for each weapon seperately
+- weapon hitbox difference
 - xp system
 - ability dmg immunity
-- 3rd scene load bug
+- floating text
+- 3rd scene load bug (gamemanager twice)
 - enemy movement
-- too many public variables
-- save player stats
+- save player data
 - can remove AA from abilities (?)
-- not allowed to use two different abilities at the same time
+
 
 ADD:
-- ability on cd sound
-- enemy damage xp share
+- shooting weapons (bow/wand)
+- actual inventory 
+- attcking pets
 - edit level1
 - player sprite
 - quest on npc
 - respawn enemy
 - enemy drops
-

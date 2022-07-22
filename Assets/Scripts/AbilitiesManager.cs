@@ -10,46 +10,19 @@ public class AbilitiesManager : MonoBehaviour
 
     // References
     [SerializeField] Player player;
-    [SerializeField] private Text aaCdText;
-    [SerializeField] private Text ability1CdText;
-    [SerializeField] private Text ability2CdText;
-    [SerializeField] private Image aaCdImage;
-    [SerializeField] private Image abilityCd1Image;
-    [SerializeField] private Image abilityCd2Image;
-
     private Animator anim;
 
     // To avoid using two abilities at the same time
-    public bool isAbilityInUse = false;
-    
+    private bool disableAll = false;
+    private float disableTimer = 0;
+
 
     void Start()
     {
-        // Add the components we refer to
         anim = player.GetComponentInChildren<Animator>();
-        for (int i = 0; i < abilities.Length; i++)
-            abilities[i] = gameObject.AddComponent<Ability>();
+        abilities = GetComponents<Ability>();
 
-        // Auto attack
-        abilities[0].abilityName = "AA";
-        abilities[0].cd = 0.5f;
-        
-        abilities[0].abilityCdText = aaCdText;
-        abilities[0].abilityCdImage = aaCdImage;
-
-        // Ability 1
-        abilities[1].abilityName = "Ability1";
-        abilities[1].cd = 5.0f;
-        abilities[1].castTime = 2;
-        abilities[1].abilityCdText = ability1CdText;
-        abilities[1].abilityCdImage = abilityCd1Image;
-
-        // Ability 2
-        abilities[2].abilityName = "Ability2";
-        abilities[2].cd = 10.0f;
-        abilities[2].abilityCdText = ability2CdText;
-        abilities[2].abilityCdImage = abilityCd2Image;
-
+        // Initialize texts and images
         for (int i = 0; i < abilities.Length; i++)
         {
             abilities[i].abilityCdText.gameObject.SetActive(false);
@@ -60,111 +33,90 @@ public class AbilitiesManager : MonoBehaviour
     void Update()
     {
         // Auto attack
-        if (!isAbilityInUse && !abilities[0].isAbilityCd)
+        if (!abilities[0].isCd && !disableAll)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                AbilityCast(abilities[0]);
+                CastAbility(abilities[0]); // Disable this ability for cd, disable all for cast time
                 anim.SetTrigger(abilities[0].abilityName);
             }
         }
-        else if (isAbilityInUse) {
+        else if (abilities[0].isCd && !disableAll)
             ApplyCooldown(abilities[0]);
-            ApplyAbilityCastTime(abilities[0]);
-        }
-        else ApplyCooldown(abilities[0]);
+        else if (abilities[0].isCd && disableAll) 
+            ApplyCooldown(abilities[0]);
 
-            // Ability 1 (Z)
-            if (!isAbilityInUse && !abilities[1].isAbilityCd)
+        // Ability 1 (Z)
+        if (!abilities[1].isCd && !disableAll)
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
             {
-                if (Input.GetKeyDown(KeyCode.Z))
-                {
-                    AbilityCast(abilities[1]);
-                    anim.SetTrigger(abilities[1].abilityName);
-                }
-
+                //AbilityCast(abilities[1]); 
+                CastAbility(abilities[1]); // Disable this ability for cd, disable all for cast time
+                anim.SetTrigger(abilities[1].abilityName);
             }
-            else ApplyCooldown(abilities[1]);
+        }
+        else if (abilities[1].isCd && !disableAll)
+            ApplyCooldown(abilities[1]);
+        else if (abilities[1].isCd && disableAll) 
+            ApplyCooldown(abilities[1]);
 
-            // Ability 2 (X)
-            if (!isAbilityInUse && !abilities[2].isAbilityCd)
+        // Ability 2 (X)
+        if (!abilities[2].isCd && !disableAll)
+        {
+            if (Input.GetKeyDown(KeyCode.X))
             {
-                if (Input.GetKeyDown(KeyCode.X))
-                {
-                    AbilityCast(abilities[2]);
-                    anim.SetTrigger(abilities[2].abilityName);
-                }
+                CastAbility(abilities[2]); // Disable this ability for cd, disable all for cast time
+                anim.SetTrigger(abilities[2].abilityName);
             }
-            else ApplyCooldown(abilities[2]);
-        
-
-        /*else
-        {
-            for (int i = 0; i < abilities.Length; i++)
-                if (abilities[i].isAbilityOnCast)
-                    ApplyCooldown(abilities[i]);
-        }*/
-    }
-
-    private void ApplyAbilityCastTime(Ability ability)
-    {
-        ability.castTimer -= Time.deltaTime;
-        if (ability.castTimer < 0.0f)
-        {
-            isAbilityInUse = false;
-            ability.isAbilityOnCast = false;
         }
-
-        if (!ability.isAbilityOnCast)
-        {
-            ability.cdTimer = ability.cd;
-            ability.castTimer = ability.castTime;
-        }
+        else if (abilities[2].isCd && !disableAll)
+            ApplyCooldown(abilities[2]);
+        else if (abilities[2].isCd && disableAll) 
+            ApplyCooldown(abilities[2]);
     }
 
     // Apply cooldown for ability
     private void ApplyCooldown(Ability ability)
     {
-        ability.cdTimer -= Time.deltaTime;
-        
-
-        if (ability.cdTimer < 0.0f)
+        if (disableAll)
         {
-            ability.isAbilityCd = false;
+            disableTimer -= Time.deltaTime;
+            if (disableTimer < 0)
+            {
+                disableAll = false;
+                disableTimer = 0;
+            }
+        }
+            // Reduce cd till it reaches 0 so we can use it again
+            ability.cdTimer -= Time.deltaTime;
+
+        if (ability.cdTimer < 0)
+        {
+            
+            ability.isCd = false;
+            ability.cdTimer = 0;
             ability.abilityCdText.gameObject.SetActive(false);
             ability.abilityCdImage.fillAmount = 0.0f;
-
         }
         else
         {
             ability.abilityCdText.text = Mathf.RoundToInt(ability.cdTimer).ToString();
             ability.abilityCdImage.fillAmount = ability.cdTimer / ability.cd;
         }
-
-        
     }
 
-    // Attack animation and change boxCollider position on ability cast 
-    public void AbilityCast(Ability ability)
+    public void CastAbility(Ability ability)
     {
-        if (ability.isAbilityCd)
-        {
-            // clicked during cd
-        }
-        else
-        {
-            isAbilityInUse = true;
-            ability.isAbilityCd = true;
-            ability.abilityCdText.gameObject.SetActive(true);
-            
-        }
+        // To avoid using 2 abilities at the same time
+        disableAll = true;
+        disableTimer = ability.castTime;
 
-        if (!ability.isAbilityOnCast)
-        {
-            ability.cdTimer = ability.cd;
-            ability.castTimer = ability.castTime;
-        }
+        ability.isCd = true;
+        ability.abilityCdText.gameObject.SetActive(true);
+        ability.cdTimer = ability.cd;
     }
+
 }
 
 

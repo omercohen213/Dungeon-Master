@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Player player;
     public Weapon weapon;
     public FloatingTextManager floatingTextManager;
-    public Inventory inventory;
     public HUD hud;
    
 
@@ -33,7 +32,6 @@ public class GameManager : MonoBehaviour
         {
            Destroy(floatingTextManager.gameObject);
            Destroy(player.gameObject);         
-           Destroy(inventory.gameObject);
            Destroy(hud.gameObject);
         }
         
@@ -48,22 +46,6 @@ public class GameManager : MonoBehaviour
     }
 
     // Upgrade weapon
-    public bool tryUpgradeWeapon()
-    {
-        // is max level?
-        if (weaponPrices.Count <= weapon.weaponLvl)
-            return false;
-
-        // have enough gold?
-        if (player.GetGold() >= weaponPrices[weapon.weaponLvl])
-        {
-            player.SetGold(player.GetGold()-weaponPrices[weapon.weaponLvl]);
-            weapon.UpgradeWeapon();
-            return true;
-        }
-
-        return false;
-    }
 
    /* public int GetPlayerLevel()
     {

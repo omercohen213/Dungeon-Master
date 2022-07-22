@@ -13,22 +13,19 @@ public class Player : MovingEntity
     [SerializeField] private HUD hud;
 
     // Resources
-    [SerializeField] private int gold; // {get;}
+    [SerializeField] private int gold; // {get; set;}
     [SerializeField] private int xp;
     [SerializeField] private int lvl;
     [SerializeField] private int mp;
     [SerializeField] private int maxMp;
     [SerializeField] private Weapon weapon;
-    [SerializeField] private List<Sprite> playerSprites;
-    [SerializeField] private List<Sprite> weaponSprites;
-    [SerializeField] private List<int> weaponPrices;
     [SerializeField] private List<int> xpTable;
 
     protected override void Start()
     {
         base.Start();
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();       
-        
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
     }
     private void FixedUpdate()
     {

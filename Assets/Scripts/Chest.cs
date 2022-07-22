@@ -6,6 +6,7 @@ public class Chest : Collectable
     [SerializeField] private HUD hud;
     public Sprite emptyChest;
     public int goldAmount = 10;
+
     protected override void OnCollect()
     {
         if (!collected)

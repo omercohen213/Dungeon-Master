@@ -8,18 +8,16 @@ public class HUD : MonoBehaviour
     //References
     [SerializeField] private Player player;
 
-    public Inventory inventory;
-    public GameObject inventoryExitButton;
-    public Animator InventoryAnim;
+    
 
-    public RectTransform hpBar;
-    public Text hpText;
-    public RectTransform mpBar;
-    public Text mpText;
-    public RectTransform xpBar;
-    public Text xpText;
-    public Text lvlText;
-    public Text goldText;
+    [SerializeField] private RectTransform hpBar;
+    [SerializeField] private Text hpText;
+    [SerializeField] private RectTransform mpBar;
+    [SerializeField] private Text mpText;
+    [SerializeField] private RectTransform xpBar;
+    [SerializeField] private Text xpText;
+    [SerializeField] private Text lvlText;
+    [SerializeField] private Text goldText;
 
     // Healthbar
     public void onHpChange()
@@ -42,8 +40,9 @@ public class HUD : MonoBehaviour
         int currLvlXp = player.GetXpToLevelUp(currentLvl);
         int diff = currLvlXp - prevLvlXp;
         int currXpInLvl = player.GetXp() - prevLvlXp;  // need to substract all prev lvls. CHANAGE XP SYSYEM!
+        float percentage = ((float)currXpInLvl / (float)diff) * 100;
 
-        xpText.text = currXpInLvl.ToString() + " / " + diff;
+        xpText.text = currXpInLvl.ToString() + " / " + diff + " (" + percentage.ToString("0.00") + "%)";
         float xpRatio = (float)currXpInLvl / (float)diff;
         xpBar.localScale = new Vector3(xpRatio, 1, 1);
     }
@@ -55,25 +54,10 @@ public class HUD : MonoBehaviour
 
     public void onLevelChange()
     {
-        lvlText.text = player.GetLevel().ToString();
+        lvlText.text = "LVL " + player.GetLevel().ToString();
     }
     // Show inventory on button click
-    public void OnInventoryClick()
-    {
-        if (InventoryAnim.GetCurrentAnimatorStateInfo(0).IsName("Inventory_showing"))
-        {
-            InventoryAnim.SetTrigger("hide");
-            inventoryExitButton.SetActive(false);
-        }
-
-        if (InventoryAnim.GetCurrentAnimatorStateInfo(0).IsName("Inventory_hidden"))
-        {
-            inventory.UpdateInventory();
-            InventoryAnim.SetTrigger("show");
-            inventoryExitButton.SetActive(true);
-        }
-    }
-
+    
     private void Start()
     {
         // Set up hud bars
