@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6edfd92a119e32843aa7ec5bb42eee0c, type: 3}
+  m_Name: HealthPotion
+  m_EditorClassIdentifier: 
+  itemName: Health Potion
+  type: Potion
+  requiredLvl: 1
+  inverntorySprite: {fileID: 593715681, guid: eb653f3d32519574bbdc1fe67042cb44, type: 3}

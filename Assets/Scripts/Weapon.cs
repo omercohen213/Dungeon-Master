@@ -5,8 +5,14 @@ using UnityEngine.UI;
 
 public class Weapon : Collidable
 {
+    //public string weaponName;
+    //public int minDmg, maxDmg;
+    //public int price;
+    //public bool isEquiped;
+
+
     // Damage structure
-    public int [] damage= { 10, 20, 30, 40, 50 };
+    public int[] damage = { 10, 20, 30, 40, 50 };
     public float pushForce = 2.0f;
 
     // Upgrade
@@ -45,6 +51,4 @@ public class Weapon : Collidable
         spriteRenderer.sprite = GameManager.instance.weaponSprites[weaponLvl];
 
     }
-
-
 }
