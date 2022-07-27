@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
 
     //References
     [SerializeField] private Player player;
-    public Weapon weapon;
+    //public Weapon weapon;
+    public ItemManager ItemManager;
     public FloatingTextManager floatingTextManager;
     public HUD hud;
    
@@ -98,7 +99,7 @@ public class GameManager : MonoBehaviour
         string s = "";
         s += player.GetGold().ToString() + "|";
         s += player.GetXp().ToString() + "|";
-        s += weapon.weaponLvl.ToString();
+        s += player.GetWeapon().itemName;
 
         PlayerPrefs.SetString("SaveState", s);
     }
@@ -133,7 +134,7 @@ public class GameManager : MonoBehaviour
             player.SetLevel(player.GetLevel());
         
         // Change weapon
-        weapon.SetWeaponLvl(int.Parse(data[2]));
+        //player.SetWeapon(int.Parse(data[2]));
 
         Debug.Log(data[0] + " " + data[1] + " " + data[2]);    
 

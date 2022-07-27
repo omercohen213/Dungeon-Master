@@ -3,29 +3,39 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class Player : MovingEntity
+public class Player : Fighter
 {
-    public static Player player;
+    public static Player instance;
+    
+    // Stats
+    [SerializeField] private float speed = 2;
+    
 
-    //private AbilitiesManager abilitiesManager = AbilitiesManager.instance;
-
-    public float speed = 2;
     [SerializeField] private HUD hud;
 
     // Resources
-    [SerializeField] private int gold; // {get; set;}
-    [SerializeField] private int xp;
-    [SerializeField] private int lvl;
-    [SerializeField] private int mp;
-    [SerializeField] private int maxMp;
+    private int gold; // {get; set;}
+    private int xp;
+    private int lvl;
+    private int mp;
+    private int maxMp;
+
     [SerializeField] private Weapon weapon;
+    [SerializeField] private Armor armor;
+
+
     [SerializeField] private List<int> xpTable;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     protected override void Start()
     {
         base.Start();
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-
+        
     }
     private void FixedUpdate()
     {
@@ -49,7 +59,6 @@ public class Player : MovingEntity
             OnLevelUp();
         }
     }
-
     public int GetGold()
     {
         return this.gold;
@@ -96,7 +105,6 @@ public class Player : MovingEntity
     {
         return xpTable;
     }
-
     public int GetXpToLevelUp(int level)
     {
         int r = 0;
@@ -131,6 +139,14 @@ public class Player : MovingEntity
         hp = maxHp;
         hud.onHpChange();
         hud.onLevelChange();
+    }  
+    public Weapon GetWeapon()
+    {
+        return weapon;
+    }
+    public void SetWeapon(Weapon weapon)
+    {
+        this.weapon = weapon;
     }
 
 }

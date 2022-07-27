@@ -2,36 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MovingEntity
+public class Enemy : Fighter
 {
 
-    // XP
+    // Drops
     [SerializeField] private int xpValue = 10;
-    [SerializeField] private Player player;
+    public GameObject itemDrop;
+    private Player player;     
 
     // Logic
     public float triggerLength = 1;
     public float chaseLength = 5;
     public float chaseSpeed = 1.5f;
     public float returnSpeed = 3.0f;
-    private bool chasing=false;
+    private bool chasing;
     private bool collidingWithPlayer;
     private Transform playerTransform;
     private Vector3 startingPos;
-
+    [SerializeField] private List<Item> itemDrops = new List<Item>();
+   
 
     // Hitbox
     public ContactFilter2D filter;
-    private BoxCollider2D hitbox;
     private Collider2D[] hits = new Collider2D[10];
 
     protected override void Start()
     {
         base.Start();
+        player = Player.instance;
         playerTransform = GameObject.Find("Player").transform;
-        //playerTransform = GameManager.instance.player.transform
         startingPos = transform.position;
-        hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>();
+        
+ 
     }
 
     private void FixedUpdate()
@@ -80,10 +82,47 @@ public class Enemy : MovingEntity
 
     protected override void Death()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        gameObject.SetActive(false);
         player.GrantXp(xpValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 20, Color.magenta, transform.position, Vector3.up * 40, 1.0f);
+        DropItem();
+        Invoke("Respawn", 3);
+    }
+
+    private void DropItem()
+    {      
+        int rnd = Random.Range(0, 100);
+        itemDrops.Sort((item1, item2) => item1.dropRate.CompareTo(item2.dropRate)); // Sort the list by drop rate (ascending order)
         
+        // Drop the most rare item possible (try other implementations)
+        foreach (Item item in itemDrops){
+            if (rnd < item.dropRate)
+            {
+                // Creating the item object and its components
+                GameObject itemDropClone = Instantiate(itemDrop);              
+                itemDropClone.GetComponent<ItemManager>().SetItem(item);
+                itemDropClone.GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                itemDropClone.name = itemDrop.name;
+                itemDropClone.transform.position = transform.position;
+                itemDropClone.transform.localScale = item.spriteSize;
+
+                Debug.Log(rnd + " Dropped: " + item.itemName);
+                ItemManager.instance.DestroyItemDrop();
+                return;
+            }
+        }
+    }
+    
+    private void Respawn()
+    {
+        Enemy enemyClone = Instantiate(this);        
+        enemyClone.name = name;
+        enemyClone.transform.position = startingPos;
+        enemyClone.hp = maxHp;
+        enemyClone.gameObject.SetActive(true);
+       
+        Destroy(gameObject);
     }
 
 }

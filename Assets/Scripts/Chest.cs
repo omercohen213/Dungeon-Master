@@ -4,8 +4,8 @@ public class Chest : Collectable
 {
     [SerializeField] private Player player;
     [SerializeField] private HUD hud;
-    public Sprite emptyChest;
-    public int goldAmount = 10;
+    [SerializeField] private Sprite emptyChest;
+    [SerializeField] private int goldAmount = 10;
 
     protected override void OnCollect()
     {

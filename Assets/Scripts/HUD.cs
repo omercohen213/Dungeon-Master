@@ -7,9 +7,6 @@ public class HUD : MonoBehaviour
 {
     //References
     [SerializeField] private Player player;
-
-    
-
     [SerializeField] private RectTransform hpBar;
     [SerializeField] private Text hpText;
     [SerializeField] private RectTransform mpBar;
@@ -19,7 +16,6 @@ public class HUD : MonoBehaviour
     [SerializeField] private Text lvlText;
     [SerializeField] private Text goldText;
 
-    // Healthbar
     public void onHpChange()
     {
         hpText.text = player.GetHp() + " / " + player.GetMaxHp();
@@ -46,39 +42,40 @@ public class HUD : MonoBehaviour
         float xpRatio = (float)currXpInLvl / (float)diff;
         xpBar.localScale = new Vector3(xpRatio, 1, 1);
     }
-
     public void onGoldChange()
     {
         goldText.text = "$" + player.GetGold().ToString();
     }
-
     public void onLevelChange()
     {
         lvlText.text = "LVL " + player.GetLevel().ToString();
     }
-    // Show inventory on button click
     
     private void Start()
     {
         // Set up hud bars
+
+        // HP bar
         hpText.text = player.GetHp() + " / " + player.GetMaxHp();
         float hpRatio = (float)player.GetHp() / (float)player.GetMaxHp();
         hpBar.localScale = new Vector3(hpRatio, 1, 1);
 
+        // MP bar
         mpText.text = player.GetMp() + " / " + player.GetMaxMp();
         //float mpRatio = (float)player.GetMp() / (float)player.GetMaxMp();
         //mpBar.localScale = new Vector3(mpRatio, 1, 1);
         
+        // XP bar
         int currentLvl = player.GetLevel();
         int prevLvlXp = player.GetXpToLevelUp(currentLvl - 1);
         int currLvlXp = player.GetXpToLevelUp(currentLvl);
         int diff = currLvlXp - prevLvlXp;    
         int currXpInLvl = player.GetXp() - prevLvlXp; // need to substract all prev lvls. CHANAGE XP SYSYEM!
-
         xpText.text = currXpInLvl.ToString() + " / " + diff;
         float xpRatio = (float)currXpInLvl / (float)diff;
         xpBar.localScale = new Vector3(xpRatio, 1, 1);
 
+        // Gold
         goldText.text = "$" + player.GetGold().ToString();
     }
 }

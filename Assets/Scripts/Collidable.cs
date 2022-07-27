@@ -23,9 +23,7 @@ public class Collidable : MonoBehaviour
 
             // Array is not cleaned up so we do it by ourselves
             hits[i] = null;
-
         }
-
     }
 
     protected virtual void OnCollide(Collider2D coll)

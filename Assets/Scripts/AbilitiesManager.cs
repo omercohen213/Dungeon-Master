@@ -13,7 +13,7 @@ public class AbilitiesManager : MonoBehaviour
     private Animator anim;
 
     // To avoid using two abilities at the same time
-    private bool disableAll = false;
+    private bool isAnimationActive = false;
     private float disableTimer = 0;
 
 
@@ -32,59 +32,56 @@ public class AbilitiesManager : MonoBehaviour
 
     void Update()
     {
+        // Can use an interface(?)
+
         // Auto attack
-        if (!abilities[0].isCd && !disableAll)
+        if (!abilities[0].isCd && !isAnimationActive) // Ability is not on cd and no ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                CastAbility(abilities[0]); // Disable this ability for cd, disable all for cast time
-                anim.SetTrigger(abilities[0].abilityName);
+                anim.SetTrigger(abilities[0].abilityName); // Animate
+                DisableAbility(abilities[0]);              
             }
         }
-        else if (abilities[0].isCd && !disableAll)
-            ApplyCooldown(abilities[0]);
-        else if (abilities[0].isCd && disableAll) 
+        else if (abilities[0].isCd) // Ability on cd
             ApplyCooldown(abilities[0]);
 
+
         // Ability 1 (Z)
-        if (!abilities[1].isCd && !disableAll)
+        if (!abilities[1].isCd && !isAnimationActive) // Ability is not on cd and no ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                //AbilityCast(abilities[1]); 
-                CastAbility(abilities[1]); // Disable this ability for cd, disable all for cast time
-                anim.SetTrigger(abilities[1].abilityName);
+                anim.SetTrigger(abilities[1].abilityName); // Animate
+                DisableAbility(abilities[1]);              
             }
         }
-        else if (abilities[1].isCd && !disableAll)
-            ApplyCooldown(abilities[1]);
-        else if (abilities[1].isCd && disableAll) 
+        else if (abilities[1].isCd) // Ability on cd
             ApplyCooldown(abilities[1]);
 
+
         // Ability 2 (X)
-        if (!abilities[2].isCd && !disableAll)
+        if (!abilities[2].isCd && !isAnimationActive) // ability is not on cd and no ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
-                CastAbility(abilities[2]); // Disable this ability for cd, disable all for cast time
-                anim.SetTrigger(abilities[2].abilityName);
+                anim.SetTrigger(abilities[2].abilityName); // Animate
+                DisableAbility(abilities[2]);               
             }
         }
-        else if (abilities[2].isCd && !disableAll)
-            ApplyCooldown(abilities[2]);
-        else if (abilities[2].isCd && disableAll) 
+        else if (abilities[2].isCd) // Ability on cd
             ApplyCooldown(abilities[2]);
     }
 
     // Apply cooldown for ability
     private void ApplyCooldown(Ability ability)
     {
-        if (disableAll)
+        if (isAnimationActive)
         {
             disableTimer -= Time.deltaTime;
             if (disableTimer < 0)
             {
-                disableAll = false;
+                isAnimationActive = false;
                 disableTimer = 0;
             }
         }
@@ -106,11 +103,12 @@ public class AbilitiesManager : MonoBehaviour
         }
     }
 
-    public void CastAbility(Ability ability)
+    // Disable this ability for cd time, disable all abilties for animation time
+    public void DisableAbility(Ability ability)
     {
         // To avoid using 2 abilities at the same time
-        disableAll = true;
-        disableTimer = ability.castTime;
+        isAnimationActive = true;
+        disableTimer = ability.animationTime;
 
         ability.isCd = true;
         ability.abilityCdText.gameObject.SetActive(true);

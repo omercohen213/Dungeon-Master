@@ -1,7 +1,6 @@
 *****to-do List*****
 
 Fix:
-- weapon hitbox difference
 - xp system
 - ability dmg immunity
 - floating text
@@ -9,14 +8,21 @@ Fix:
 - enemy movement
 - save player data
 - can remove AA from abilities (?)
+- ICollidable interface (?)
+- first item equipped
+- add player defense (change dmg system)
+- can't unequip weapon
+- potion in ability bar
+- implement item drop rate differently (Enemy line 98)
 
 
 ADD:
-- shooting weapons (bow/wand)
-- actual inventory 
+- ranged weapons (classes)
 - attcking pets
 - edit level1
-- player sprite
 - quest on npc
 - respawn enemy
 - enemy drops
+- pickup animation
+- itemview animation
+
