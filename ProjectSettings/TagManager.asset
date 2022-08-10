@@ -48,12 +48,15 @@ TagManager:
   - name: Interactable
     uniqueID: 3130426855
     locked: 0
-  - name: Actor
+  - name: Player
     uniqueID: 3708530103
-    locked: 0
-  - name: Weapon
-    uniqueID: 4223241999
     locked: 0
   - name: Blocking
     uniqueID: 2014478901
+    locked: 0
+  - name: FloatingText
+    uniqueID: 1271571225
+    locked: 0
+  - name: Items
+    uniqueID: 4223241999
     locked: 0

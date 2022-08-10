@@ -1,28 +1,23 @@
-*****to-do List*****
-
 Fix:
-- xp system
 - ability dmg immunity
-- floating text
-- 3rd scene load bug (gamemanager twice)
+- 2nd scene load
 - enemy movement
-- save player data
-- can remove AA from abilities (?)
-- ICollidable interface (?)
-- first item equipped
-- add player defense (change dmg system)
-- can't unequip weapon
+- change dmg system (player defense, randomize dmg output)
 - potion in ability bar
-- implement item drop rate differently (Enemy line 98)
-
+- item drop rate(Enemy line 98)
+- change implementation of RecieveDamage
+- database instead of json
 
 ADD:
+- drop item from inventory
 - ranged weapons (classes)
 - attcking pets
-- edit level1
+- edit 2nd scene
 - quest on npc
-- respawn enemy
-- enemy drops
-- pickup animation
+- item pickup animation
 - itemview animation
+- log-in, register forms (database)
+- save data every 5 min 
+
+https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
 

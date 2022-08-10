@@ -138,4 +138,6 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
+  animator: {fileID: 0}
+  animatorController: {fileID: 0}
   item: {fileID: 11400000, guid: 5f97ad852ffac9d449ab231610a7817e, type: 2}

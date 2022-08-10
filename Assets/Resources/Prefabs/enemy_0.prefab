@@ -126,14 +126,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb886e4377191d94aa4a24d44279c9a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 100
-  maxHp: 100
-  xpValue: 10
-  itemDrop: {fileID: 9183128663664778909, guid: 31bde36439503b54ea5421d71cf2e655, type: 3}
+  xpValue: 12
+  itemDropPrefab: {fileID: 0}
+  player: {fileID: 0}
   triggerLength: 0.5
   chaseLength: 1
   chaseSpeed: 1.5
   returnSpeed: 3
+  hp: 100
+  maxHp: 100
   itemDrops:
   - {fileID: 11400000, guid: 2cec233aef6c10048bcaed8a4d46906a, type: 2}
   - {fileID: 11400000, guid: 88e118ce8b6aabb468657fbcc703e107, type: 2}

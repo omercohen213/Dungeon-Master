@@ -1,5 +1,8 @@
 using UnityEngine;
+using System;
 
+
+[Serializable]
 public class Item : ScriptableObject
 {
     public string itemName;
@@ -8,9 +11,9 @@ public class Item : ScriptableObject
     public Sprite inverntoryIcon;
     public Sprite itemSprite;
     public Vector3 spriteSize;
-    public bool isEquipped;
     public int price;
     public float dropRate; // Percentage; In range 0-100
+    
     
     // Material
     

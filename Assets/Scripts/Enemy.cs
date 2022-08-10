@@ -7,8 +7,8 @@ public class Enemy : Fighter
 
     // Drops
     [SerializeField] private int xpValue = 10;
-    public GameObject itemDrop;
-    private Player player;     
+    [SerializeField] private GameObject itemDropPrefab;
+    [SerializeField] private Player player; // DETECT FOR ANY PLAYER
 
     // Logic
     public float triggerLength = 1;
@@ -19,6 +19,13 @@ public class Enemy : Fighter
     private bool collidingWithPlayer;
     private Transform playerTransform;
     private Vector3 startingPos;
+    public int hp;
+    public int maxHp;
+
+    // Immunity 
+    protected float immuneTime = 0.5f;
+    protected float lastImmune;
+
     [SerializeField] private List<Item> itemDrops = new List<Item>();
    
 
@@ -29,11 +36,8 @@ public class Enemy : Fighter
     protected override void Start()
     {
         base.Start();
-        player = Player.instance;
-        playerTransform = GameObject.Find("Player").transform;
-        startingPos = transform.position;
-        
- 
+        playerTransform = player.transform;
+        startingPos = transform.position;       
     }
 
     private void FixedUpdate()
@@ -42,7 +46,7 @@ public class Enemy : Fighter
         if (Vector3.Distance(startingPos, playerTransform.position) < chaseLength)
         {
             if (!chasing)
-                UpdateMotor(startingPos - transform.position, returnSpeed);
+                UpdateMotor(startingPos - transform.position, returnSpeed); // Go back to the starting position
 
             // Is player in trigger range?
             if (Vector3.Distance(startingPos, playerTransform.position) < triggerLength)
@@ -50,7 +54,7 @@ public class Enemy : Fighter
 
             if (chasing)
                 if (!collidingWithPlayer)
-                    UpdateMotor((playerTransform.position - transform.position).normalized, chaseSpeed); // Go to player
+                    UpdateMotor((0.75f * playerTransform.position - transform.position).normalized, chaseSpeed); // Go to player
                 else UpdateMotor(startingPos - transform.position, returnSpeed); // Go back to the starting position
         }
         else
@@ -80,12 +84,28 @@ public class Enemy : Fighter
         }      
     }
 
+    protected override void RecieveDamage(Damage dmg)
+    {
+        if (Time.time - lastImmune > immuneTime)
+        {
+            lastImmune = Time.time;
+            hp -= dmg.dmgAmount;
+            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
+            FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
+
+            if (hp <= 0)
+            {
+                hp = 0;
+                Death();
+            }
+        }
+    }
+
     protected override void Death()
     {
-        //Destroy(gameObject);
         gameObject.SetActive(false);
         player.GrantXp(xpValue);
-        GameManager.instance.ShowText("+" + xpValue + " xp", 20, Color.magenta, transform.position, Vector3.up * 40, 1.0f);
+        FloatingTextManager.instance.ShowFloatingText("+" + xpValue + "xp", 12, Color.magenta, player.transform.position, "GetResource", 1.5f);
         DropItem();
         Invoke("Respawn", 3);
     }
@@ -98,17 +118,16 @@ public class Enemy : Fighter
         // Drop the most rare item possible (try other implementations)
         foreach (Item item in itemDrops){
             if (rnd < item.dropRate)
-            {
-                // Creating the item object and its components
-                GameObject itemDropClone = Instantiate(itemDrop);              
-                itemDropClone.GetComponent<ItemManager>().SetItem(item);
-                itemDropClone.GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                itemDropClone.name = itemDrop.name;
-                itemDropClone.transform.position = transform.position;
-                itemDropClone.transform.localScale = item.spriteSize;
+            { 
+                // Drop item; Create the item object and its components
+                GameObject itemDrop = Instantiate(itemDropPrefab);              
+                itemDrop.GetComponent<ItemManager>().item = item;
+                itemDrop.GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                itemDrop.name = item.name;
+                itemDrop.transform.position = transform.position;
+                itemDrop.transform.localScale = item.spriteSize;
 
-                Debug.Log(rnd + " Dropped: " + item.itemName);
-                ItemManager.instance.DestroyItemDrop();
+                ItemManager.instance.DestroyItemDrop(); // Destroy object after a few seconds
                 return;
             }
         }

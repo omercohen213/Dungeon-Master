@@ -2,40 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fighter : Entity
+public class Fighter : MonoBehaviour
 {
     protected float xSpeed = 0.75f;
-    protected float ySpeed = 1.0f;
+    protected float ySpeed = 1;
     protected float pushTolerance = 0.2f;
     protected Vector3 moveDelta;
     protected RaycastHit2D hit;
-
-    [SerializeField] protected int hp;
-    [SerializeField] protected int maxHp;
-
-    // Immunity 
-    protected float immuneTime = 1.0f;
-    protected float lastImmune;
+    protected BoxCollider2D boxCollider;
 
     // Push
     protected Vector3 pushDirection;
 
+    protected virtual void Start()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
+
     protected virtual void RecieveDamage(Damage dmg)
     {
-        //if (Weapon.instance.)
-        if (Time.time - lastImmune > immuneTime)
-        {
-            lastImmune = Time.time;
-            hp -= dmg.dmgAmount;
-            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-            GameManager.instance.ShowText(dmg.dmgAmount.ToString(), 20, Color.red, dmg.origin, Vector3.up, 1f);
-
-            if (hp <= 0)
-            {
-                hp = 0;
-                Death();
-            }
-        }
+        Debug.Log("hit");
     }
 
     protected virtual void Death()
@@ -76,7 +62,7 @@ public class Fighter : Entity
 
         if (hit.collider == null)
         {
-            // move vertically (shift for running)
+            // move vertically (hold shift to run)
             if (Input.GetKey(KeyCode.LeftShift))
                 transform.Translate(moveDelta.x * Time.deltaTime, 0, 0);
             else transform.Translate(moveDelta.x * Time.deltaTime * 0.5f, 0, 0);

@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e22e6939929d7e40b22156926d0719d, type: 3}
-  m_Name: God Sword
+  m_Name: Ninja_Sword
   m_EditorClassIdentifier: 
-  itemName: God Sword
+  itemName: Ninja Sword
   type: Weapon
-  requiredLvl: 1265
+  requiredLvl: 1
   inverntoryIcon: {fileID: 1885342678, guid: 42e231b5b12626a46af325c9533fc811, type: 3}
-  itemSprite: {fileID: 1984216572, guid: 94b0fcaa4dd229a48b13fa86d880faee, type: 3}
-  spriteSize: {x: 0.5, y: 0.5, z: 0}
-  isEquipped: 0
-  price: 500000
-  dropRate: 1
-  minDmg: 25665
-  maxDmg: 29885
+  itemSprite: {fileID: 1485112418, guid: 94b0fcaa4dd229a48b13fa86d880faee, type: 3}
+  spriteSize: {x: 0.4, y: 0.4, z: 0}
+  price: 100
+  dropRate: 15
+  minDmg: 15
+  maxDmg: 150
   range: 2
   pushForce: 2

@@ -5,43 +5,29 @@ using UnityEngine.UI;
 
 public class FloatingTextManager : MonoBehaviour
 {
-    public GameObject textContainer;
+    public static FloatingTextManager instance;
+
+    public Transform textContainer;
     public GameObject textPrefab;
-    private List<FloatingText> floatingTexts = new List<FloatingText>();
 
-    public void Update()
+    private void Awake()
     {
-        foreach(FloatingText txt in floatingTexts)
-            txt.UpdateFloatingText();
+        instance = this;
     }
-    public void Show(string text,int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
-    {
-        FloatingText floatingText = GetFloatingText();
 
-        floatingText.txt.text = text;
-        floatingText.txt.fontSize = fontSize;
-        floatingText.txt.color = color;
-        floatingText.go.transform.position = Camera.main.WorldToScreenPoint(position); // transfar world space to screen space so we can use it in the UI
-        floatingText.motion = motion;
-        floatingText.duration = duration;
-        
+    public void ShowFloatingText(string text,int fontSize, Color color, Vector3 position, string animTrigger , float destroyTimer)
+    {       
+        GameObject floatingText = Instantiate(textPrefab, textContainer);
+        Text txt = floatingText.GetComponentInChildren<Text>();
 
-        floatingText.Show();
+        floatingText.GetComponentInChildren<Transform>().transform.position = position;
+        txt.text = text;
+        txt.fontSize = fontSize;
+        txt.color = color;
 
-        }
-    private FloatingText GetFloatingText()
-    {
-        FloatingText txt = floatingTexts.Find(t => !t.active);
+        if (animTrigger != null)
+            floatingText.gameObject.GetComponentInChildren<Animator>().SetTrigger(animTrigger);
 
-        if (txt == null)
-        {
-            txt = new FloatingText();
-            txt.go = Instantiate(textPrefab);
-            txt.go.transform.SetParent(textContainer.transform);
-            txt.txt = txt.go.GetComponent<Text>();
-
-            floatingTexts.Add(txt);
-        } 
-        return txt;
+        Destroy(floatingText, destroyTimer);
     }
 }
