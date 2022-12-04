@@ -16,6 +16,7 @@ ADD:
 - itemview, questView animation
 - log-in, register forms (database)
 - save data every 5 min 
+- enemy hp bar
 
 https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
 
