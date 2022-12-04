@@ -1,0 +1,288 @@
+{
+  "playerDatas": [
+    {
+      "gold": 155,
+      "xp": 150,
+      "lvl": 3,
+      "playerName": "IchBinSpite",
+      "hp": 80,
+      "maxHp": 120,
+      "mp": 10,
+      "maxMp": 10,
+      "position": {
+        "x": -0.13863544166088105,
+        "y": 0.19082939624786378,
+        "z": 0.0
+      },
+      "itemNames": [
+        "Ninja Sword",
+        "Great Helmet",
+        "Great Armor",
+        "Health Potion",
+        "Health Potion",
+        "God Sword",
+        "Great Helmet",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "types": [
+        "Weapon",
+        "Helmet",
+        "Armor",
+        "Potion",
+        "Potion",
+        "Weapon",
+        "Helmet",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "requiredLvls": [
+        1,
+        2,
+        5,
+        999,
+        999,
+        1265,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "inverntoryIcons": [
+        {
+          "instanceID": 25952
+        },
+        {
+          "instanceID": 25946
+        },
+        {
+          "instanceID": 25956
+        },
+        {
+          "instanceID": 25950
+        },
+        {
+          "instanceID": 25950
+        },
+        {
+          "instanceID": 25952
+        },
+        {
+          "instanceID": 25946
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        }
+      ],
+      "itemSprites": [
+        {
+          "instanceID": 25766
+        },
+        {
+          "instanceID": 25948
+        },
+        {
+          "instanceID": 25958
+        },
+        {
+          "instanceID": 25852
+        },
+        {
+          "instanceID": 25852
+        },
+        {
+          "instanceID": 25954
+        },
+        {
+          "instanceID": 25948
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        },
+        {
+          "instanceID": 0
+        }
+      ],
+      "spriteSizes": [
+        {
+          "x": 0.4000000059604645,
+          "y": 0.4000000059604645,
+          "z": 0.0
+        },
+        {
+          "x": 0.4000000059604645,
+          "y": 0.4000000059604645,
+          "z": 0.0
+        },
+        {
+          "x": 0.4000000059604645,
+          "y": 0.4000000059604645,
+          "z": 0.0
+        },
+        {
+          "x": 0.33000001311302187,
+          "y": 0.33000001311302187,
+          "z": 0.0
+        },
+        {
+          "x": 0.33000001311302187,
+          "y": 0.33000001311302187,
+          "z": 0.0
+        },
+        {
+          "x": 0.5,
+          "y": 0.5,
+          "z": 0.0
+        },
+        {
+          "x": 0.4000000059604645,
+          "y": 0.4000000059604645,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ],
+      "prices": [
+        100,
+        260,
+        250,
+        50,
+        50,
+        500000,
+        260,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dropRates": [
+        15.0,
+        10.0,
+        10.0,
+        50.0,
+        50.0,
+        1.0,
+        10.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "lastItem": 7,
+      "equippedWeaponIndex": 0,
+      "equippedArmorIndex": -1,
+      "equippedHelmetIndex": 6,
+      "weapon": {
+        "instanceID": 25940
+      },
+      "armor": {
+        "instanceID": 0
+      },
+      "helmet": {
+        "instanceID": 0
+      }
+    }
+  ]
+}
