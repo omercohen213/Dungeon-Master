@@ -41,8 +41,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CreateXpTable();
-        //Register();
-        LogIn();     
+        Register();
+        //LogIn();     
     }
 
     // Initialize player data on log-in
