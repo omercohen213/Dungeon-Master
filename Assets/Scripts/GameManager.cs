@@ -1,9 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using System.Linq;
-using System;
 using System.IO;
 
 public class GameManager : MonoBehaviour
@@ -24,6 +20,7 @@ public class GameManager : MonoBehaviour
         // to avoid creating two gameManagers
         if (instance == null)
         {
+            DontDestroyOnLoad(this);
             instance = this;
         }
         else if (instance != null)
@@ -32,10 +29,6 @@ public class GameManager : MonoBehaviour
             Destroy(player.gameObject);
             Destroy(hud.gameObject);
         }
-
-
-        //SceneManager.sceneLoaded += LoadState;
-        //SceneManager.sceneLoaded += onSceneLoaded;
     }
 
     private void Start()
@@ -63,7 +56,7 @@ public class GameManager : MonoBehaviour
         gameData.playerDatas.Add(playerData);
         player.InitializePlayer();
         player.LoadPlayer(playerData);
-        
+
         SaveGame();
     }
 
@@ -117,59 +110,13 @@ public class GameManager : MonoBehaviour
             GameData gameData = JsonUtility.FromJson<GameData>(json);
 
             var playerData = gameData.playerDatas.Find(x => x.playerName == player.playerName);
-            if (playerData != null)            
+            if (playerData != null)
                 player.LoadPlayer(playerData);
-            
+
             else Debug.Log("Could not load player data of name: " + player.playerName);
 
         }
     }
-
-    
-    // Save game state when loading a new scene 
-    /*    public void SaveState()
-        {
-            string s = "";
-            s += player.GetGold().ToString() + "|";
-            s += player.GetXp().ToString() + "|";
-            s += player.GetWeapon().itemName;
-
-            PlayerPrefs.SetString("SaveState", s);
-        }
-
-        public void onSceneLoaded(Scene s, LoadSceneMode mode)
-        {
-            // Spawn point
-            RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
-            Transform portal = GameObject.Find("SpawnPoint").transform;
-            float portalWidth = portalRectTransform.rect.width * 0.16f;
-            float portalHeight = portalRectTransform.rect.height * 0.16f;
-
-            player.transform.position = portal.position + new Vector3 (portalWidth, -portalHeight/3, 0);
-        }
-
-
-        // Load game state when loading a new scene 
-        public void LoadState(Scene s, LoadSceneMode mode)
-        {
-            SceneManager.sceneLoaded -= LoadState;
-
-            if (!PlayerPrefs.HasKey("SaveState"))
-                return;
-
-            string[] data = PlayerPrefs.GetString("SaveState").Split('|');
-
-            player.SetGold(int.Parse(data[0]));
-
-            // Xp
-            player.SetXp(int.Parse(data[1]));
-            if (player.GetLevel() != 1)
-                player.SetLevel(player.GetLevel());
-
-
-            Debug.Log(data[0] + " " + data[1] + " " + data[2]);    
-
-        }*/
 }
 
 
