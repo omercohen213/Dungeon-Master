@@ -754,7 +754,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -762,6 +762,27 @@ TextureImporter:
       bones: []
       spriteID: 7e9020b1e22c42a4d977bea3eac2d637
       internalID: -266743758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 46
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b2fbee33faf1214899877dbe8ca118b
+      internalID: -2105451085
       vertices: []
       indices: 
       edges: []
@@ -780,6 +801,7 @@ TextureImporter:
       player_1: 1541401212
       pillar_1: 932114942
       weapon_0: 112909143
+      enemy_1: -2105451085
       weapon_1: 1497491027
       stairs_0: -1746876656
       weapon_2: -1441059965

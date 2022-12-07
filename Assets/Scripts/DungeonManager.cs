@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -13,6 +11,7 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] private Image progressBar;
     private float progressTarget;
     private bool gameIsLoading = false;
+    private Player playerToLoad;
 
     private void Awake()
     {
@@ -29,8 +28,9 @@ public class DungeonManager : MonoBehaviour
     }
 
     // Load a new scene adding inbetween a loading screen
-    public async void LoadScene(string sceneName)
+    public async void LoadScene(string sceneName, Player player)
     {
+        playerToLoad = player;
         gameIsLoading = true;
         progressBar.fillAmount = 0;
         progressTarget = 0;
@@ -44,7 +44,9 @@ public class DungeonManager : MonoBehaviour
             progressTarget = scene.progress;
         }
         while (scene.progress < 0.9f);
-        await Task.Delay(1000);
+        await Task.Delay(500);
+        
+        SpawnPlayer();
         scene.allowSceneActivation = true;
         LoadingScreen.SetActive(false);
         gameIsLoading = false;
@@ -56,7 +58,6 @@ public class DungeonManager : MonoBehaviour
         if (gameIsLoading)
         {          
             progressBar.fillAmount = Mathf.MoveTowards(progressBar.fillAmount, progressTarget, 3 * Time.unscaledDeltaTime);
-            Debug.Log(progressBar.fillAmount);
             Time.timeScale = 0f;
         }
         else
@@ -66,7 +67,8 @@ public class DungeonManager : MonoBehaviour
 
     }
 
-    public void onSceneLoaded(Scene s, LoadSceneMode mode)
+    // Spawn player on scene loaded
+    private void SpawnPlayer()
     {
         // Spawn point
         RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
@@ -74,6 +76,6 @@ public class DungeonManager : MonoBehaviour
         float portalWidth = portalRectTransform.rect.width * 0.16f;
         float portalHeight = portalRectTransform.rect.height * 0.16f;
 
-        //player.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
+        playerToLoad.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
     }
 }

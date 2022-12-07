@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
-using System.IO;
+using UnityEngine.SceneManagement;
 
 public class Player : Fighter
 {
@@ -38,17 +36,37 @@ public class Player : Fighter
     private Weapon weapon;
     private Armor armor;
     private Helmet helmet;
-    [SerializeField] private GameObject playerNameObj;
 
     public List<Quest> activeQuests;
+
+    // Player Name
+    private Camera cam;
+    private GameObject playerNameText;
+    [SerializeField] public Vector3 offset;
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        cam = Camera.main;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        cam = Camera.main;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        playerNameText = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
+    }
+
+
+
     private void Update()
     {
-        // Player name; Change player local scale on turning to sprite renderer change
-        playerNameObj.transform.position = new Vector3(transform.position.x, transform.position.y - 0.12f);
-        if (transform.localScale.x == -1)
-            playerNameObj.transform.localScale = new Vector3(-1, 1, 1);
-        else playerNameObj.transform.localScale = new Vector3(1, 1, 1);
+        Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
+        if (playerNameText.transform.position != pos)
+            playerNameText.transform.position = pos;
     }
+
     private void FixedUpdate()
     {
         // arrow keys (returns 1/-1 on key down)
@@ -143,7 +161,6 @@ public class Player : Fighter
         playerData.equippedArmorIndex = equippedArmorIndex;
         playerData.equippedHelmetIndex = equippedHelmetIndex;
 
-        // string of all properties
         playerData.weapon = weapon; // Starts at index 0 of items array
         if (playerData.equippedHelmetIndex != -1)
             playerData.helmet = helmet;

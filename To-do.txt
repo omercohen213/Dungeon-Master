@@ -1,22 +1,19 @@
 Fix:
 - ability dmg immunity
-- 2nd scene load
 - enemy movement
 - change dmg system (player defense, randomize dmg output)
 - potion in ability bar
+- abilities manager attached to HUD/battle bar
 - change implementation of RecieveDamage
 - database instead of json (A solution could be to give id to every item and decode it every login)
 
 ADD:
 - ranged weapons (classes)
 - attcking pets
-- edit 2nd scene
 - shop
 - item pickup animation
 - itemview, questView animation
-- log-in, register forms (database)
-- save data every 5 min 
-- enemy hp bar
+- log-in, register forms (database) ( save data every 5 min )
 
 https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
 

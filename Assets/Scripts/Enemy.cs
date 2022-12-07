@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : Fighter
 {
@@ -10,8 +11,8 @@ public class Enemy : Fighter
     [SerializeField] private GameObject itemDropPrefab;
 
     // Logic
-    [SerializeField] private Player player;
     [SerializeField] public int id;
+    private Player player;
     public float triggerLength = 1;
     public float chaseLength = 5;
     public float chaseSpeed = 1.5f;
@@ -33,11 +34,37 @@ public class Enemy : Fighter
     public ContactFilter2D filter;
     private Collider2D[] hits = new Collider2D[10];
 
+    // Hp Bar
+    private RectTransform hpBarFrame;
+    private RectTransform hpBar;
+    private Text hpText;
+    [SerializeField] private Vector3 offset;
+    private Camera cam;
+
     protected override void Start()
     {
         base.Start();
+        cam = Camera.main;
+
+        // Initialize hp bar and text
+        hpBar = transform.Find("HpBarCanvas/HpBarFrame/HpBar").GetComponent<RectTransform>();
+        hpText = transform.Find("HpBarCanvas/HpBarFrame/HpText").GetComponent<Text>();
+        hpBarFrame = transform.Find("HpBarCanvas/HpBarFrame").GetComponent<RectTransform>();
+        hpText.text = hp + " / " + maxHp;
+        float hpRatio = (float)hp / (float)maxHp;
+        hpBar.localScale = new Vector3(hpRatio, 1, 1);
+
+        // Player
+        player = GameObject.Find("Player").GetComponent<Player>();
         playerTransform = player.transform;
         startingPos = transform.position;
+    }
+
+    private void Update()
+    {
+        Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
+        if (hpBarFrame.transform.position != pos)
+            hpBarFrame.transform.position = pos;
     }
 
     private void FixedUpdate()
@@ -97,6 +124,14 @@ public class Enemy : Fighter
                 Death();
             }
         }
+        onHpChange();
+    }
+
+    public void onHpChange()
+    {
+        hpText.text = hp + " / " + maxHp;
+        float hpRatio = (float)hp / (float)maxHp;
+        hpBar.localScale = new Vector3(hpRatio, 1, 1);
     }
 
     protected override void Death()
