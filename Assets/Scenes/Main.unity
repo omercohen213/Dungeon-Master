@@ -16491,9 +16491,6 @@ GameObject:
   - component: {fileID: 1565153691}
   - component: {fileID: 1565153690}
   - component: {fileID: 1565153693}
-  - component: {fileID: 1565153694}
-  - component: {fileID: 1565153696}
-  - component: {fileID: 1565153695}
   m_Layer: 5
   m_Name: BattleBar
   m_TagString: Untagged
@@ -16596,66 +16593,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 628875940}
---- !u!114 &1565153694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1565153688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b760cb6ae8c6d644abb9f533eba048f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  abilityName: AA
-  cd: 0.5
-  cdTimer: 0
-  isCd: 0
-  animationTime: 0.3
-  isAnimationActive: 0
-  abilityCdImage: {fileID: 1908269432}
-  abilityCdText: {fileID: 1380060010}
---- !u!114 &1565153695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1565153688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b760cb6ae8c6d644abb9f533eba048f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  abilityName: Ability2
-  cd: 5
-  cdTimer: 0
-  isCd: 0
-  animationTime: 0
-  isAnimationActive: 0
-  abilityCdImage: {fileID: 682857870}
-  abilityCdText: {fileID: 1519917356}
---- !u!114 &1565153696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1565153688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b760cb6ae8c6d644abb9f533eba048f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  abilityName: Ability1
-  cd: 10
-  cdTimer: 0
-  isCd: 0
-  animationTime: 3
-  isAnimationActive: 0
-  abilityCdImage: {fileID: 1040994102}
-  abilityCdText: {fileID: 631658464}
 --- !u!224 &1609484342 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3284952304702964411, guid: ae5b9117728a00045a17516bba7a147d, type: 3}
