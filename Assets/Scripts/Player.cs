@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : Fighter
 {
+    public static Player instance;
+
     [SerializeField] private float speed = 2;
 
     [SerializeField] private HUD hud;
@@ -19,6 +21,13 @@ public class Player : Fighter
     public string playerName { get; private set; }
     public int hp { get; set; }
     public int maxHp { get; set; }
+    public int attackPower { get; set; }
+    public int abilityPower { get; set; }
+    public int defense { get; set; }
+    public int magicResist { get; set; }
+    public float critChance { get; private set; }
+    public int abilityPoints { get; private set; }
+    public int attributePoints { get; private set; }
 
     // Damage immunity 
     protected float immuneTime = 1.0f;
@@ -36,7 +45,6 @@ public class Player : Fighter
     private Weapon weapon;
     private Armor armor;
     private Helmet helmet;
-
     public List<Quest> activeQuests;
 
     // Player Name
@@ -57,8 +65,6 @@ public class Player : Fighter
         SceneManager.sceneLoaded += OnSceneLoaded;
         playerNameText = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
     }
-
-
 
     private void Update()
     {
@@ -117,10 +123,9 @@ public class Player : Fighter
         // To not instantly show lvl up text on load 
         if (Time.time > 1)
             FloatingTextManager.instance.ShowFloatingText("Level Up!", 30, Color.magenta, transform.position, "GetResource", 1.5f);
-        maxHp += 10;
-        hp = maxHp;
-        // get attribute points
         lvl++;
+        abilityPoints++;
+        attributePoints++;
         hud.onHpChange();
         hud.onLevelChange();
     }
@@ -144,7 +149,6 @@ public class Player : Fighter
         playerData.maxMp = maxMp;
 
         // Inventory data
-
         playerData.lastItem = lastItem;
         for (int i = 0; i < lastItem; i++)
         {
@@ -170,6 +174,7 @@ public class Player : Fighter
 
     public void LoadPlayer(PlayerData playerData)
     {
+        Debug.Log(playerData.xp);
         this.playerData = playerData;
 
         // Rescources data
@@ -241,20 +246,21 @@ public class Player : Fighter
         transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
     }
 
-
     public void InitializePlayer()
     {
-        playerName = "IchBinSpite";
+        playerName = "";
         items = new Item[15];
         Weapon firstWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");
         items[0] = firstWeapon;
+        attackPower = 1 + firstWeapon.attackPower;
+        defense = 1;
     }
-   /* private void SaveTextureToFile(Texture2D texture, string fileName)
-    {
-        var bytes = texture.EncodeToPNG();
-        var file = File.Open(Application.dataPath + "/" + fileName, FileMode.Create);
-        var binary = new BinaryWriter(file);
-        binary.Write(bytes);
-        file.Close();
-    }*/
+    /* private void SaveTextureToFile(Texture2D texture, string fileName)
+     {
+         var bytes = texture.EncodeToPNG();
+         var file = File.Open(Application.dataPath + "/" + fileName, FileMode.Create);
+         var binary = new BinaryWriter(file);
+         binary.Write(bytes);
+         file.Close();
+     }*/
 }

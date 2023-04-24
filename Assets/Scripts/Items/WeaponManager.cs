@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponManager : Collidable
@@ -14,13 +12,12 @@ public class WeaponManager : Collidable
                 return;
 
             // Create a new damage object, and then sending it to the fighter we hit
-            Damage dmg = new Damage
-            {
-                origin = transform.position,
-                dmgAmount = player.GetWeapon().minDmg,
-                pushForce = player.GetWeapon().pushForce
+            Damage dmg = new Damage();
+            dmg.origin = transform.position;
+            float rnd = Random.Range(0.8f, 1);
+            dmg.dmgAmount = Mathf.RoundToInt(player.attackPower * rnd);
+            dmg.pushForce = player.GetWeapon().pushForce;
 
-            };
             coll.SendMessage("RecieveDamage", dmg);
         }
 

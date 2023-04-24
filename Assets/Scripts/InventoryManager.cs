@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using static UnityEditor.Progress;
+using System;
+using Unity.VisualScripting;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -79,31 +82,33 @@ public class InventoryManager : MonoBehaviour
     public void OnItemClick(int index)
     {
         itemView.SetActive(true);
+        Item item = player.items[index];
 
         // Change item sprite and description
-        itemPreviewImage.sprite = player.items[index].itemSprite;
+        itemPreviewImage.sprite = item.itemSprite;
+        itemDescriptionText.text = "";
 
-        switch (player.items[index].type)
+        switch (item.type)
         {
             case "Weapon":
-                Weapon weapon = (Weapon)player.items[index];
-                itemDescriptionText.text += "Damage: " + weapon.minDmg + "-" + weapon.maxDmg + "\n" +
+                Weapon weapon = (Weapon)item;
+                itemDescriptionText.text += "Damage: " + weapon.attackPower + "\n" +
                 "Range: " + weapon.range;
                 break;
             case "Helmet":
-                Helmet helmet = (Helmet)player.items[index];
+                Helmet helmet = (Helmet)item;
                 itemDescriptionText.text += "Defense: " + helmet.defense + "\n";
                 break;
-            case "Legs":
-                break;
             case "Armor":
-                Armor armor = (Armor)player.items[index];
+                Armor armor = (Armor)item;
                 itemDescriptionText.text += "Defense: " + armor.defense + "\n";
                 break;
         }
 
-        itemDescriptionText.text = "Required Lvl: " + player.items[index].requiredLvl + "\n";
-        if (player.lvl < player.items[index].requiredLvl)
+        string lvlText = "Required Lvl: " + item.requiredLvl + "\n";
+        itemDescriptionText.text = lvlText + itemDescriptionText.text;
+
+        if (player.lvl < item.requiredLvl)
             itemDescriptionText.color = Color.red;
         else itemDescriptionText.color = Color.white;
 
@@ -125,48 +130,15 @@ public class InventoryManager : MonoBehaviour
     {
         Text equipButtonText = equipButton.GetComponentInChildren<Text>();
         GameObject ESign = content.transform.GetChild(index).Find("ESign").gameObject;
+        Item item = player.items[index];
 
         // Equip
         if (!isEquipped(index))
         {
-            if (player.lvl >= player.items[index].requiredLvl)
+            if (player.lvl >= item.requiredLvl)
             {
-                switch (player.items[index].type)
-                {
-                    case "Weapon":
-                        // Unequip the equipped weapon
-                        if (player.equippedWeaponIndex != -1)
-                        {
-                            GameObject lastESignWeapon = content.transform.GetChild(player.equippedWeaponIndex).Find("ESign").gameObject;
-                            lastESignWeapon.SetActive(false);
-                        }
-                        player.transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = player.items[index].itemSprite; // Change sprite
-                        player.equippedWeaponIndex = index; // Assign index of equipped weapon
-                        break;
-
-                    case "Armor":
-                        // Unequip the equipped armor
-                        if (player.equippedArmorIndex != -1)
-                        {
-                            GameObject lastESignArmor = content.transform.GetChild(player.equippedArmorIndex).Find("ESign").gameObject;
-                            lastESignArmor.SetActive(false);
-                        }
-                        player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = player.items[index].itemSprite;
-                        player.equippedArmorIndex = index; // Assign index of equipped armor 
-                        break;
-
-                    case "Helmet":
-                        // Unequip the equipped helmet
-                        if (player.equippedHelmetIndex != -1)
-                        {
-                            GameObject lastESignHelmet = content.transform.GetChild(player.equippedHelmetIndex).Find("ESign").gameObject;
-                            lastESignHelmet.SetActive(false);
-                        }
-
-                        player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = player.items[index].itemSprite;
-                        player.equippedHelmetIndex = index; // Assign index of equipped helmet
-                        break;
-                }
+                UnequipEquippedItem(item);
+                EquipChosenItem(item, index);
                 GameManager.instance.SaveGame();
             }
             else
@@ -182,26 +154,86 @@ public class InventoryManager : MonoBehaviour
         // Unequip
         else
         {
-            if (player.items[index].type == "Weapon")
+            switch (item.type)
             {
-                Debug.Log("You can't unequip your weapon!");
-                return;
-            }
-
-            switch (player.items[index].type)
-            {
+                case "Weapon":
+                    Debug.Log("You can't unequip your weapon!");
+                    break;
                 case "Armor":
+                    Armor armor = (Armor)item;
                     player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
                     player.equippedArmorIndex = -1;
+                    player.defense -= armor.defense;
                     break;
                 case "Helmet":
+                    Helmet helmet = (Helmet)item;
                     player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = null;
                     player.equippedHelmetIndex = -1;
+                    player.defense -= helmet.defense;
                     break;
             }
             ESign.SetActive(false);
             equipButtonText.text = "Equip";
             GameManager.instance.SaveGame();
+        }
+    }
+
+    private void EquipChosenItem(Item item, int index)
+    {
+        switch (item.type)
+        {
+            case "Weapon":
+                Weapon weapon = (Weapon)item;
+                player.transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite; // Change sprite
+                player.equippedWeaponIndex = index; // Assign index of equipped weapon
+                player.attackPower += weapon.attackPower;
+                break;
+            case "Armor":
+                Armor armor = (Armor)item;
+                player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                player.equippedArmorIndex = index; // Assign index of equipped armor 
+                player.defense += armor.defense;
+                break;
+            case "Helmet":
+                Helmet helmet = (Helmet)item;
+                player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                player.equippedHelmetIndex = index; // Assign index of equipped helmet
+                player.defense += helmet.defense;
+                break;
+        }
+
+    }
+
+    private void UnequipEquippedItem(Item item)
+    {
+        switch (item.type)
+        {
+            case "Weapon":
+                Weapon weapon = (Weapon)item;
+                GameObject lastESignWeapon = content.transform.GetChild(player.equippedWeaponIndex).Find("ESign").gameObject;
+                lastESignWeapon.SetActive(false);
+                player.attackPower -= weapon.attackPower;
+                break;
+
+            case "Armor":
+                Armor armor = (Armor)item;
+                if (player.equippedArmorIndex != -1)
+                {
+                    GameObject lastESignArmor = content.transform.GetChild(player.equippedArmorIndex).Find("ESign").gameObject;
+                    lastESignArmor.SetActive(false);
+                    player.defense -= armor.defense;
+                }
+                break;
+
+            case "Helmet":
+                Helmet helmet = (Helmet)item;
+                if (player.equippedHelmetIndex != -1)
+                {
+                    GameObject lastESignHelmet = content.transform.GetChild(player.equippedHelmetIndex).Find("ESign").gameObject;
+                    lastESignHelmet.SetActive(false);
+                    player.defense -= helmet.defense;
+                }
+                break;
         }
     }
 
@@ -276,7 +308,7 @@ public class InventoryManager : MonoBehaviour
         for (int i = 0; i < inventorySpace; i++)
         {
             Button itemButton = content.transform.GetChild(i).GetComponent<Button>();
-            
+
             // Remove listeners from buttons with no items
             if (i > player.lastItem - 1)
             {

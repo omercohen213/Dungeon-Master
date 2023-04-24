@@ -1,11 +1,12 @@
 Fix:
-- ability dmg immunity
 - enemy movement
-- change dmg system (player defense, randomize dmg output)
 - potion in ability bar
-- abilities manager attached to HUD/battle bar
+- abilities manager attached to HUD/battle bar (?)
 - change implementation of RecieveDamage
-- database instead of json (A solution could be to give id to every item and decode it every login)
+- give id to every item and decode it every login (?)
+- Active player stats texts (22/4)
+- ability points and upgrade abilities (22/4)
+- attribute points (23/4)
 
 ADD:
 - ranged weapons (classes)
@@ -17,3 +18,7 @@ ADD:
 
 https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
 
+23/4:
+- ability dmg immunity
+- added player stats (unfinished)
+- updated defense and dmg system

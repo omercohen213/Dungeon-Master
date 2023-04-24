@@ -20,7 +20,6 @@ MonoBehaviour:
   spriteSize: {x: 0.4, y: 0.4, z: 0}
   price: 100
   dropRate: 15
-  minDmg: 100
-  maxDmg: 150
+  attackPower: 30
   range: 2
   pushForce: 2

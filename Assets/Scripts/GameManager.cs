@@ -34,23 +34,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CreateXpTable();
-        Register();
-        //LogIn();     
+        FirstRun();
+        //if (File.Exists(@"SaveGame.json"))
+        //LoadGame();
+        // else FirstRun();
     }
 
-    // Initialize player data on log-in
-    public void LogIn()
-    {
-        // Initialize properties   
-        playerData.InitializePlayerData();
-        player.InitializePlayer();
-
-        // Then assign it to the player
-        LoadGame();
-    }
-
-    // Initialize player data on first time playing the game
-    public void Register()
+    // Initialize player data when running the game for the first time 
+    public void FirstRun()
     {
         playerData.ResetPlayerData();
         gameData.playerDatas.Add(playerData);
@@ -60,6 +51,7 @@ public class GameManager : MonoBehaviour
         SaveGame();
     }
 
+    // Create the data structure that determines how much xp needed for each level to level up for the player
     private void CreateXpTable()
     {
         xpTable.Add(0);
@@ -100,6 +92,13 @@ public class GameManager : MonoBehaviour
         {
             streamWriter.Write(json);
         }
+
+       /* player.SavePlayer();
+        var json = JsonUtility.ToJson(playerData);
+        using (StreamWriter streamWriter = new StreamWriter("SaveGame.json"))
+        {
+            streamWriter.Write(json);
+        }*/
     }
 
     public void LoadGame()
@@ -110,12 +109,24 @@ public class GameManager : MonoBehaviour
             GameData gameData = JsonUtility.FromJson<GameData>(json);
 
             var playerData = gameData.playerDatas.Find(x => x.playerName == player.playerName);
+            Debug.Log(playerData.xp);
             if (playerData != null)
                 player.LoadPlayer(playerData);
 
             else Debug.Log("Could not load player data of name: " + player.playerName);
 
         }
+
+        /*player.InitializePlayer();
+        playerData.InitializePlayerData();
+        using (StreamReader streamReader = new StreamReader("SaveGame.json"))
+        {
+            string json = streamReader.ReadToEnd();
+            PlayerData playerData = JsonUtility.FromJson<PlayerData>(json);
+            Debug.Log(playerData.lvl);
+            player.LoadPlayer(playerData);
+        }*/
+
     }
 }
 

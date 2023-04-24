@@ -5,13 +5,12 @@ using UnityEngine.UI;
 
 public class Enemy : Fighter
 {
-
     // Drops
     [SerializeField] private int xpAmount = 10;
     [SerializeField] private GameObject itemDropPrefab;
 
     // Logic
-    [SerializeField] public int id;
+    [SerializeField] private int id;
     private Player player;
     public float triggerLength = 1;
     public float chaseLength = 5;
@@ -23,9 +22,11 @@ public class Enemy : Fighter
     private Vector3 startingPos;
     public int hp;
     public int maxHp;
+    public int damage;
 
     // Immunity 
-    protected float immuneTime = 0.5f;
+    private const float DEFAULT_IMMUNE_TIME = 0.5f;
+    protected float immuneTime;
     protected float lastImmune;
 
     [SerializeField] private List<Item> itemDrops = new List<Item>();
@@ -51,7 +52,7 @@ public class Enemy : Fighter
         hpText = transform.Find("HpBarCanvas/HpBarFrame/HpText").GetComponent<Text>();
         hpBarFrame = transform.Find("HpBarCanvas/HpBarFrame").GetComponent<RectTransform>();
         hpText.text = hp + " / " + maxHp;
-        float hpRatio = (float)hp / (float)maxHp;
+        float hpRatio = (float)hp / maxHp;
         hpBar.localScale = new Vector3(hpRatio, 1, 1);
 
         // Player
@@ -65,6 +66,15 @@ public class Enemy : Fighter
         Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
         if (hpBarFrame.transform.position != pos)
             hpBarFrame.transform.position = pos;
+
+        if (AbilitiesManager.instance.isAbility1Active())
+        {
+            immuneTime = 0.1f;
+        }
+        else
+        {
+            immuneTime = DEFAULT_IMMUNE_TIME;
+        }
     }
 
     private void FixedUpdate()
@@ -113,6 +123,7 @@ public class Enemy : Fighter
     {
         if (Time.time - lastImmune > immuneTime)
         {
+            
             lastImmune = Time.time;
             hp -= dmg.dmgAmount;
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;

@@ -16,6 +16,11 @@ public class PlayerData
     public int maxHp;
     public int mp;
     public int maxMp;
+    public int attackPower;
+    public int abilityPower;
+    public int defense;
+    public int magicResist;
+    public float critChance;
     public Vector3 position;
 
     // Inventory items
@@ -47,7 +52,7 @@ public class PlayerData
     // On log-in
     public void InitializePlayerData()
     {
-        playerName = "IchBinSpite";
+        playerName = "Old Player";
         itemNames = new List<string>();
         types = new string[15];
         requiredLvls = new int[15];
@@ -70,18 +75,25 @@ public class PlayerData
         dropRates[0] = firstWeapon.dropRate;
     }
 
-    // On registration
+    // On first run
     public void ResetPlayerData()
     {
         gold = 0;
         xp = 0;
         lvl = 1;
-        playerName = "IchBinSpite";
+        playerName = "New Player";
         hp = 100;
         maxHp = 100;
         mp = 10;
         maxMp = 10;
-        lastItem = 0;
+        attackPower = 1; // + player.getWeapon.attackPower;
+        abilityPower = 1;
+        defense = 1;
+        magicResist = 1;
+        critChance = 0;
+
+        lastItem = 0; // ? 
+
         equippedWeaponIndex = 0; // Equipped items' index in the items array
         equippedArmorIndex = -1;
         equippedHelmetIndex = -1;
@@ -95,6 +107,6 @@ public class PlayerData
         spriteSizes = new Vector3[15];
         prices = new int[15];
         dropRates = new float[15];
-        lastItem = 1;
+        lastItem = 1; // ?
     }
 }
