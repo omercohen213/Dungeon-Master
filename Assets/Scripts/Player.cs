@@ -1,32 +1,32 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Player : Fighter
 {
-    public static Player instance;
-
     [SerializeField] private float speed = 2;
 
     [SerializeField] private HUD hud;
 
-    public PlayerData playerData = new PlayerData();
-
     // Resources
-    public int gold { get; private set; }
-    public int xp { get; private set; }
-    public int lvl { get; private set; }
-    public int mp { get; private set; }
-    public int maxMp { get; private set; }
-    public string playerName { get; private set; }
-    public int hp { get; set; }
-    public int maxHp { get; set; }
-    public int attackPower { get; set; }
-    public int abilityPower { get; set; }
-    public int defense { get; set; }
-    public int magicResist { get; set; }
-    public float critChance { get; private set; }
-    public int abilityPoints { get; private set; }
+    // ------------------ Change protection level ------------------
+    public int gold;
+    public int xp;
+    public int lvl;
+    public int mp;
+    public int maxMp;
+    public string playerName;
+    public int hp;
+    public int maxHp;
+    public int attackPower; // private set
+    public int abilityPower;
+    public int defense;
+    public int magicResist;
+    public float critChance;
+    public int abilityPoints;
     public int attributePoints { get; private set; }
 
     // Damage immunity 
@@ -36,15 +36,15 @@ public class Player : Fighter
     // Inventory
     public Item[] items;
 
-    //public List<Item> items; 
+    // ------------------Move it to inventoryManager and save data ------------------
     public int lastItem; // Number of items the player has
     public int equippedWeaponIndex;
     public int equippedArmorIndex;
     public int equippedHelmetIndex;
 
-    private Weapon weapon;
-    private Armor armor;
-    private Helmet helmet;
+    public Weapon weapon;
+    public Armor armor;
+    public Helmet helmet;
     public List<Quest> activeQuests;
 
     // Player Name
@@ -88,9 +88,13 @@ public class Player : Fighter
         if (Time.time - lastImmune > immuneTime)
         {
             lastImmune = Time.time;
-            hp -= dmg.dmgAmount;
+            if (dmg.dmgAmount > 0)
+            {
+                hp -= dmg.dmgAmount;
+                FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, Color.red, dmg.origin, "Hit", 2.0f);
+            }
+            else FloatingTextManager.instance.ShowFloatingText("0", 30, Color.red, dmg.origin, "Hit", 2.0f);
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-            FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, Color.red, dmg.origin, "Hit", 2.0f);
 
             if (hp <= 0)
             {
@@ -124,143 +128,74 @@ public class Player : Fighter
         if (Time.time > 1)
             FloatingTextManager.instance.ShowFloatingText("Level Up!", 30, Color.magenta, transform.position, "GetResource", 1.5f);
         lvl++;
+        hp = maxHp;
         abilityPoints++;
         attributePoints++;
         hud.onHpChange();
         hud.onLevelChange();
-    }
+    } 
 
     public Weapon GetWeapon()
     {
         return weapon;
     }
-
-    public void SavePlayer()
+    public Armor GetArmor()
     {
-        // Rescources data
-        playerData.playerName = playerName;
-        playerData.lvl = lvl;
-        playerData.xp = xp;
-        playerData.gold = gold;
-        playerData.position = transform.position; // scene
-        playerData.hp = hp;
-        playerData.maxHp = maxHp;
-        playerData.mp = mp;
-        playerData.maxMp = maxMp;
-
-        // Inventory data
-        playerData.lastItem = lastItem;
-        for (int i = 0; i < lastItem; i++)
-        {
-            playerData.itemNames.Add(items[i].itemName);
-            playerData.types[i] = items[i].type;
-            playerData.requiredLvls[i] = items[i].requiredLvl;
-            playerData.inverntoryIcons[i] = items[i].inverntoryIcon;
-            playerData.itemSprites[i] = items[i].itemSprite;
-            playerData.spriteSizes[i] = items[i].spriteSize;
-            playerData.prices[i] = items[i].price;
-            playerData.dropRates[i] = items[i].dropRate;
-        }
-        playerData.equippedWeaponIndex = equippedWeaponIndex;
-        playerData.equippedArmorIndex = equippedArmorIndex;
-        playerData.equippedHelmetIndex = equippedHelmetIndex;
-
-        playerData.weapon = weapon; // Starts at index 0 of items array
-        if (playerData.equippedHelmetIndex != -1)
-            playerData.helmet = helmet;
-        if (playerData.equippedArmorIndex != -1)
-            playerData.armor = armor;
+        return armor;
+    }
+    public Helmet GetHelmet()
+    {
+        return helmet;
     }
 
-    public void LoadPlayer(PlayerData playerData)
+    public void EquipItem(Item item)
     {
-        Debug.Log(playerData.xp);
-        this.playerData = playerData;
-
-        // Rescources data
-        playerName = playerData.playerName;
-        lvl = playerData.lvl;
-        xp = playerData.xp;
-        gold = playerData.gold;
-        hp = playerData.hp;
-        maxHp = playerData.maxHp;
-        mp = playerData.mp;
-        maxMp = playerData.maxMp;
-
-        // Inventory data
-        for (int i = 1; i < lastItem; i++)
+        switch (item.type)
         {
-            switch (playerData.types[i])
-            {
-                case "Helmet":
-                    items[i] = new Helmet();
-                    break;
-                case "Weapon":
-                    items[i] = new Weapon();
-                    break;
-                case "Armor":
-                    items[i] = new Armor();
-                    break;
-                default: items[i] = new Item();
-                    break;
-            }
-            items[i].name = playerData.itemNames[i];
-            items[i].itemName = playerData.itemNames[i];
-            items[i].type = playerData.types[i];
-            items[i].requiredLvl = playerData.requiredLvls[i];
-            items[i].inverntoryIcon = playerData.inverntoryIcons[i];
-            items[i].itemSprite = playerData.itemSprites[i];
-            items[i].spriteSize = playerData.spriteSizes[i];
-            items[i].price = playerData.prices[i];
-            items[i].dropRate = playerData.dropRates[i];
-
-           /* Texture2D texture = new Texture2D (35,35);
-            SaveTextureToFile(texture, "picture.png");*/
+            case "Weapon":
+                Weapon weapon = (Weapon)item;
+                this.weapon = weapon;
+                transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                attackPower += weapon.attackPower;
+                break;
+            case "Armor":
+                Armor armor = (Armor)item;
+                this.armor = armor;
+                transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                defense += armor.defense;
+                break;
+            case "Helmet":
+                Helmet helmet = (Helmet)item;
+                this.helmet = helmet;
+                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite; 
+                defense += helmet.defense;
+                break;
         }
-        lastItem = playerData.lastItem;
+    }
 
-        equippedWeaponIndex = playerData.equippedWeaponIndex;
-        equippedArmorIndex = playerData.equippedArmorIndex;
-        equippedHelmetIndex = playerData.equippedHelmetIndex;
-
-        // Items data              
-        weapon = (Weapon)items[equippedWeaponIndex];
-        transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = items[equippedWeaponIndex].itemSprite;
-
-        if (equippedArmorIndex != -1)
+    public void UnequipItem(Item item)
+    {
+        switch (item.type)
         {
-            armor = (Armor)items[equippedArmorIndex];
-            transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = items[equippedArmorIndex].itemSprite;
-        }
-        if (equippedHelmetIndex != -1)
-        {
-            helmet = (Helmet)items[equippedHelmetIndex];
-            transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = items[equippedHelmetIndex].itemSprite;
-        }
-
-        // Spawn point
-        RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
-        Transform portal = GameObject.Find("SpawnPoint").transform;
-        float portalWidth = portalRectTransform.rect.width * 0.16f;
-        float portalHeight = portalRectTransform.rect.height * 0.16f;
-        transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
+            case "Weapon":
+                attackPower -= ((Weapon)item).attackPower;
+                break;
+            case "Armor":
+                armor = null;
+                transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
+                defense -= ((Armor)item).defense;
+                break;
+            case "Helmet":
+                helmet = null;
+                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                defense -= ((Helmet)item).defense;
+                break;
+        }       
     }
 
     public void InitializePlayer()
     {
-        playerName = "";
         items = new Item[15];
-        Weapon firstWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");
-        items[0] = firstWeapon;
-        attackPower = 1 + firstWeapon.attackPower;
-        defense = 1;
+        
     }
-    /* private void SaveTextureToFile(Texture2D texture, string fileName)
-     {
-         var bytes = texture.EncodeToPNG();
-         var file = File.Open(Application.dataPath + "/" + fileName, FileMode.Create);
-         var binary = new BinaryWriter(file);
-         binary.Write(bytes);
-         file.Close();
-     }*/
 }

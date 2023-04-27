@@ -68,13 +68,9 @@ public class Enemy : Fighter
             hpBarFrame.transform.position = pos;
 
         if (AbilitiesManager.instance.isAbility1Active())
-        {
             immuneTime = 0.1f;
-        }
         else
-        {
             immuneTime = DEFAULT_IMMUNE_TIME;
-        }
     }
 
     private void FixedUpdate()
@@ -125,9 +121,13 @@ public class Enemy : Fighter
         {
             
             lastImmune = Time.time;
-            hp -= dmg.dmgAmount;
+            if(dmg.dmgAmount > 0)
+            {
+                hp -= dmg.dmgAmount;
+                FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
+            }
+            else FloatingTextManager.instance.ShowFloatingText("0", 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-            FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
 
             if (hp <= 0)
             {

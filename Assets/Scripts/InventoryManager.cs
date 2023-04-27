@@ -1,11 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
-using static UnityEditor.Progress;
-using System;
-using Unity.VisualScripting;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -32,6 +26,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private int inventorySpace;
 
+
     private void Awake()
     {
         instance = this;
@@ -53,7 +48,6 @@ public class InventoryManager : MonoBehaviour
     // Add item to inventory on pickup
     public void AddItem(Item item)
     {
-        //player.items.Add(item);
         player.items[player.lastItem] = item;
         player.lastItem++;
         GameManager.instance.SaveGame();
@@ -154,27 +148,16 @@ public class InventoryManager : MonoBehaviour
         // Unequip
         else
         {
-            switch (item.type)
-            {
-                case "Weapon":
-                    Debug.Log("You can't unequip your weapon!");
-                    break;
-                case "Armor":
-                    Armor armor = (Armor)item;
-                    player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
-                    player.equippedArmorIndex = -1;
-                    player.defense -= armor.defense;
-                    break;
-                case "Helmet":
-                    Helmet helmet = (Helmet)item;
-                    player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = null;
-                    player.equippedHelmetIndex = -1;
-                    player.defense -= helmet.defense;
-                    break;
+            if (item.type == "Weapon") {
+                Debug.Log("You can't unequip your weapon!");
             }
-            ESign.SetActive(false);
-            equipButtonText.text = "Equip";
-            GameManager.instance.SaveGame();
+            else
+            {
+                UnequipEquippedItem(item);
+                ESign.SetActive(false);
+                equipButtonText.text = "Equip";
+                GameManager.instance.SaveGame();
+            }     
         }
     }
 
@@ -183,25 +166,18 @@ public class InventoryManager : MonoBehaviour
         switch (item.type)
         {
             case "Weapon":
-                Weapon weapon = (Weapon)item;
-                player.transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite; // Change sprite
-                player.equippedWeaponIndex = index; // Assign index of equipped weapon
-                player.attackPower += weapon.attackPower;
+                player.EquipItem((Weapon)item);
+                player.equippedWeaponIndex = index; // Assign index of equipped weapon              
                 break;
             case "Armor":
-                Armor armor = (Armor)item;
-                player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                player.EquipItem((Armor)item);
                 player.equippedArmorIndex = index; // Assign index of equipped armor 
-                player.defense += armor.defense;
                 break;
             case "Helmet":
-                Helmet helmet = (Helmet)item;
-                player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                player.EquipItem((Helmet)item);
                 player.equippedHelmetIndex = index; // Assign index of equipped helmet
-                player.defense += helmet.defense;
                 break;
         }
-
     }
 
     private void UnequipEquippedItem(Item item)
@@ -209,29 +185,28 @@ public class InventoryManager : MonoBehaviour
         switch (item.type)
         {
             case "Weapon":
-                Weapon weapon = (Weapon)item;
                 GameObject lastESignWeapon = content.transform.GetChild(player.equippedWeaponIndex).Find("ESign").gameObject;
                 lastESignWeapon.SetActive(false);
-                player.attackPower -= weapon.attackPower;
+                player.UnequipItem((Weapon)item);
                 break;
 
             case "Armor":
-                Armor armor = (Armor)item;
                 if (player.equippedArmorIndex != -1)
                 {
                     GameObject lastESignArmor = content.transform.GetChild(player.equippedArmorIndex).Find("ESign").gameObject;
                     lastESignArmor.SetActive(false);
-                    player.defense -= armor.defense;
+                    player.equippedArmorIndex = -1;
+                    player.UnequipItem((Armor)item);
                 }
                 break;
 
             case "Helmet":
-                Helmet helmet = (Helmet)item;
                 if (player.equippedHelmetIndex != -1)
                 {
                     GameObject lastESignHelmet = content.transform.GetChild(player.equippedHelmetIndex).Find("ESign").gameObject;
                     lastESignHelmet.SetActive(false);
-                    player.defense -= helmet.defense;
+                    player.equippedHelmetIndex = -1;
+                    player.UnequipItem((Helmet)item);
                 }
                 break;
         }

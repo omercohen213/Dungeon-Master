@@ -17,9 +17,10 @@ MonoBehaviour:
   requiredLvl: 1
   inverntoryIcon: {fileID: 1885342678, guid: 42e231b5b12626a46af325c9533fc811, type: 3}
   itemSprite: {fileID: 1485112418, guid: 94b0fcaa4dd229a48b13fa86d880faee, type: 3}
+  spriteName: 
   spriteSize: {x: 0.4, y: 0.4, z: 0}
   price: 100
   dropRate: 15
-  attackPower: 30
+  attackPower: 2000
   range: 2
   pushForce: 2
