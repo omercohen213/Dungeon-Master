@@ -15,7 +15,8 @@ public class AbilitiesManager : MonoBehaviour
     private Animator anim;
 
     // To avoid using two abilities at the same time
-    private float disableTimer = 0;
+    private bool disableAll = false;
+    private float disableAllTimer = 0;
 
     private void Awake()
     {
@@ -41,7 +42,7 @@ public class AbilitiesManager : MonoBehaviour
 
         // Auto attack
         Ability AA = abilities[0];
-        if (!AA.isCd && !AA.isAnimationActive) // Ability is not on cd and no ability animation is active
+        if (!AA.isCd && !disableAll) // Ability is not on cd and no ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -55,10 +56,11 @@ public class AbilitiesManager : MonoBehaviour
 
         // Ability 1 (Z)
         Ability ability1 = abilities[1];
-        if (!ability1.isCd && !ability1.isAnimationActive) // Ability is not on cd and no ability animation is active
+        if (!ability1.isCd && !disableAll) // Ability is not on cd and no other ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                //Debug.Log("before " + disableAll);
                 anim.SetTrigger(ability1.abilityName); // Animate
                 DisableAbilityUse(ability1);
             }
@@ -70,7 +72,7 @@ public class AbilitiesManager : MonoBehaviour
 
         // Ability 2 (X)
         Ability ability2 = abilities[2];
-        if (!ability2.isCd && !ability2.isAnimationActive) // ability is not on cd and no ability animation is active
+        if (!ability2.isCd && !disableAll) // ability is not on cd and no ability animation is active
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
@@ -88,17 +90,18 @@ public class AbilitiesManager : MonoBehaviour
     {
         if (ability.isAnimationActive)
         {
-            disableTimer -= Time.deltaTime;
-            if (disableTimer < 0)
+            disableAllTimer -= Time.deltaTime;
+            if (disableAllTimer < 0) // Animation has ended and we can use another ability
             {             
                 ability.isAnimationActive = false;
-                disableTimer = 0;
+                disableAll = false;
+                disableAllTimer = 0;
             }
         }
         // Reduce cd till it reaches 0 so we can use it again
         ability.cdTimer -= Time.deltaTime;
 
-        // Done with cd
+        // Cd is over
         if (ability.cdTimer < 0)
         {
             ability.isCd = false;
@@ -117,9 +120,10 @@ public class AbilitiesManager : MonoBehaviour
     // Disable this ability use for cd time, disable all abilties for animation time
     public void DisableAbilityUse(Ability ability)
     {
-        // To avoid using 2 abilities at the same time      
+        // To avoid using 2 abilities at the same time     
         ability.isAnimationActive = true;
-        disableTimer = ability.animationTime;
+        disableAllTimer = ability.animationTime;
+        disableAll = true;
 
         ability.isCd = true;
         ability.abilityCdText.gameObject.SetActive(true);

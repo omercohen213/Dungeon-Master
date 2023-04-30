@@ -23,7 +23,7 @@ public class EnemyHitbox : Collidable
             Damage dmg = new Damage();
             dmg.origin = transform.position;
             float rnd = Random.Range(0.8f, 1);
-            dmg.dmgAmount = Mathf.RoundToInt(enemy.damage * rnd - player.defense);
+            dmg.dmgAmount = Mathf.RoundToInt(enemy.damage * rnd - player.Defense);
             dmg.pushForce = pushForce;
             coll.SendMessage("RecieveDamage", dmg);
         }

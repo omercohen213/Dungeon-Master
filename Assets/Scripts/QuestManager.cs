@@ -18,7 +18,7 @@ public class QuestManager : MonoBehaviour
 
     // QuestView objects
     [SerializeField] private GameObject QuestsExitButton;
-    [SerializeField] private GameObject questsView;
+    //[SerializeField] private GameObject questsView;
     [SerializeField] private GameObject questPrefab;
     [SerializeField] private Transform content;
 
@@ -47,6 +47,7 @@ public class QuestManager : MonoBehaviour
 
     private void Start()
     {
+        animator = GetComponentInChildren<Animator>();
         quests.gameObject.SetActive(false);
         questInfo.gameObject.SetActive(false);
     }
@@ -77,7 +78,7 @@ public class QuestManager : MonoBehaviour
                 int temp = i;
                 questButton.onClick.AddListener(() => OnQuestClick(npc.quests[temp], npc));
 
-                if (player.lvl < quest.requiredLvl)
+                if (player.Lvl < quest.requiredLvl)
                 {
                     questName.color = Color.red;
                     questButton.onClick.RemoveAllListeners();
@@ -92,7 +93,7 @@ public class QuestManager : MonoBehaviour
                 Button questButton = content.transform.GetChild(i).GetComponent<Button>();
                 Text questName = content.transform.GetChild(i).Find("QuestName").GetComponent<Text>();
                 Quest quest = npc.quests[i];
-                if (player.lvl < quest.requiredLvl)
+                if (player.Lvl < quest.requiredLvl)
                 {
                     questName.color = Color.red;
                     questButton.onClick.RemoveAllListeners();

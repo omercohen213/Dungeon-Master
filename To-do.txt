@@ -6,10 +6,8 @@ Fix:
 - ability points and upgrade abilities (22/4)
 - attribute points (23/4)
 (27.4)
-- player variables protection level
-- sometimes ability AA bug cant attack
 - add item stats to save & load
-- move equipped items' indexes to inventory manager and add to save & load
+- too many instance ids saved in json
 
 ADD:
 - ranged weapons (classes)

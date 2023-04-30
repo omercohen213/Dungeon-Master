@@ -6,72 +6,91 @@ using System.Collections.Generic;
 public class PlayerData
 {
     // Rescources
-    public int gold;
-    public int xp;
-    public int lvl;
-    public string playerName;
-    public int hp;
-    public int maxHp;
-    public int mp;
-    public int maxMp;
-    public int attackPower;
-    public int abilityPower;
-    public int defense;
-    public int magicResist;
-    public float critChance;
-    public Vector3 position;
+    private int gold;
+    private int xp;
+    private int lvl;
+    private string playerName;
+    private int hp;
+    private int maxHp;
+    private int mp;
+    private int maxMp;
+    private int attackPower;
+    private int abilityPower;
+    private int defense;
+    private int magicResist;
+    private float critChance;
+    private Vector3 position;
+    public int Gold { get => gold; set => gold = value; }
+    public int Xp { get => xp; set => xp = value; }
+    public int Lvl { get => lvl; set => lvl = value; }
+    public string PlayerName { get => playerName; set => playerName = value; }
+    public int Hp { get => hp; set => hp = value; }
+    public int MaxHp { get => maxHp; set => maxHp = value; }
+    public int Mp { get => mp; set => mp = value; }
+    public int MaxMp { get => maxMp; set => maxMp = value; }
+    public int AttackPower { get => attackPower; set => attackPower = value; }
+    public int AbilityPower { get => abilityPower; set => abilityPower = value; }
+    public int Defense { get => defense; set => defense = value; }
+    public int MagicResist { get => magicResist; set => magicResist = value; }
+    public float CritChance { get => critChance; set => critChance = value; }
+    public Vector3 Position { get => position; set => position = value; }
 
     // Inventory items
-    public List<Item> items;
-    public Dictionary<int, int> itemIndexMap;
+    private List<Item> items;
+    public List<Item> Items { get => items; set => items = value; }
 
-    public int lastItem; // Number of items the player owns
-    public int equippedWeaponIndex;
-    public int equippedArmorIndex;
-    public int equippedHelmetIndex;
+    private int lastItem; // Number of items the player owns
+    private int equippedWeaponIndex;
+    private int equippedArmorIndex;
+    private int equippedHelmetIndex;
+    public int LastItem { get => lastItem; set => lastItem = value; }
+    public int EquippedWeaponIndex { get => equippedWeaponIndex; set => equippedWeaponIndex = value; }
+    public int EquippedArmorIndex { get => equippedArmorIndex; set => equippedArmorIndex = value; }
+    public int EquippedHelmetIndex { get => equippedHelmetIndex; set => equippedHelmetIndex = value; }
 
     // Equipped items
-    public Weapon weapon;
-    public Armor armor;
-    public Helmet helmet;
+    private Weapon weapon;
+    private Armor armor;
+    private Helmet helmet;
+    public Weapon Weapon { get => weapon; set => weapon = value; }
+    public Armor Armor { get => armor; set => armor = value; }
+    public Helmet Helmet { get => helmet; set => helmet = value; }
 
     // On log-in
     public void InitializePlayerData()
     {
-        items = new List<Item>();
-        itemIndexMap = new Dictionary<int, int>();     
+        Items = new List<Item>();
     }
 
     // On first run
     public void ResetPlayerData()
     {
         // Resources
-        gold = 0;
-        xp = 0;
-        lvl = 1;
-        playerName = "New Player";
-        hp = 100;
-        maxHp = 100;
-        mp = 10;
-        maxMp = 10;
-        attackPower = 1;
-        abilityPower = 1;
-        defense = 1;
-        magicResist = 1;
-        critChance = 0;
-       
+        Gold = 0;
+        Xp = 0;
+        Lvl = 1;
+        PlayerName = "New Player";
+        Hp = 100;
+        MaxHp = 100;
+        Mp = 10;
+        MaxMp = 10;
+        AttackPower = 1;
+        AbilityPower = 1;
+        Defense = 1;
+        MagicResist = 1;
+        CritChance = 0;
+
         // Starting items
         Weapon startingWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");
-        weapon = startingWeapon;
-        armor = null;
-        helmet = null;
-        items.Add(startingWeapon);
-        itemIndexMap.Add(startingWeapon.GetInstanceID(), 0);       
+        Weapon = startingWeapon;
+        Armor = null;
+        Helmet = null;
+        Items.Add(startingWeapon);
 
         // Equipped items' index in the items array
-        equippedWeaponIndex = 0; 
-        equippedArmorIndex = -1;
-        equippedHelmetIndex = -1;
-        lastItem = 1;
+        EquippedWeaponIndex = 0;
+        EquippedArmorIndex = -1;
+        EquippedHelmetIndex = -1;
+        LastItem = 1;
     }
 }

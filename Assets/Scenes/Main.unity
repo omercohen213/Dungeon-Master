@@ -2101,7 +2101,6 @@ MonoBehaviour:
   - {fileID: 335385877}
   quests: {fileID: 325733181}
   QuestsExitButton: {fileID: 1146913118}
-  questsView: {fileID: 968404364}
   questPrefab: {fileID: 5982983425707666972, guid: 30bacf5888be3194fab5a9002a77f610, type: 3}
   content: {fileID: 962593973}
   questInfo: {fileID: 510476080}
@@ -10482,7 +10481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1519730c17f534c8c76ba266f79ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 628875940}
   floatingTextManager: {fileID: 784737562}
   hud: {fileID: 1563052277}
 --- !u!4 &594622121
@@ -10656,22 +10654,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  hud: {fileID: 1563052277}
-  gold: 0
-  xp: 0
-  lvl: 0
-  mp: 0
-  maxMp: 0
-  playerName: 
-  hp: 0
-  maxHp: 0
-  attackPower: 0
-  abilityPower: 0
-  defense: 0
-  magicResist: 0
-  critChance: 0
-  abilityPoints: 0
-  items: []
   lastItem: 0
   equippedWeaponIndex: 0
   equippedArmorIndex: 0
@@ -18156,7 +18138,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: IchBinSpite
+  m_Text: ddd
 --- !u!222 &1747753318
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19246,8 +19228,6 @@ MonoBehaviour:
   equipButton: {fileID: 2076696310}
   dropButton: {fileID: 1609484343}
   itemDropPrefab: {fileID: 9183128663664778909, guid: 31bde36439503b54ea5421d71cf2e655, type: 3}
-  player: {fileID: 628875940}
-  inventorySpace: 14
 --- !u!95 &2065085265
 Animator:
   serializedVersion: 4

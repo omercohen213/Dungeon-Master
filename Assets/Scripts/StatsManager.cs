@@ -17,13 +17,13 @@ public class StatsManager : MonoBehaviour
 
     void Start()
     {
-        statsText.text = "Max HP: " + player.maxHp + "\n" +
-            "Max MP: " + player.maxMp + "\n" +
-            "Attack Power: " + player.attackPower + "\n" +
-            "Ability Power: " + player.abilityPower + "\n" +
-            "Armor: " + player.defense + "\n" +
-            "Magic Resist: " + player.magicResist + "\n" +
-            "Critical Hit Chance: " + player.critChance + "%\n";
+        statsText.text = "Max HP: " + player.MaxHp + "\n" +
+            "Max MP: " + player.MaxMp + "\n" +
+            "Attack Power: " + player.AttackPower + "\n" +
+            "Ability Power: " + player.AbilityPower + "\n" +
+            "Armor: " + player.Defense + "\n" +
+            "Magic Resist: " + player.MagicResist + "\n" +
+            "Critical Hit Chance: " + player.CritChance + "%\n";
 
         //Debug.Log(player.GetWeapon().itemName);
         Image weaponImage = weapon.GetComponent<Image>();

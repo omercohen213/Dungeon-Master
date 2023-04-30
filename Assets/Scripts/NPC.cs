@@ -21,7 +21,7 @@ public class NPC : Collidable
 
     protected override void Start()
     {
-        base.Start();
+        base.Start();    
         foreach (Quest quest in quests)
         {
             if (quest.isCompleted())
@@ -36,6 +36,11 @@ public class NPC : Collidable
     {
         if (coll.name == "Player")
             if (Input.GetKeyDown(KeyCode.E))
-                QuestManager.instance.OnNpcInteract(this);
+                OnNpcInteract();
+    }
+
+    private void OnNpcInteract()
+    {
+        QuestManager.instance.OnNpcInteract(this);
     }
 }

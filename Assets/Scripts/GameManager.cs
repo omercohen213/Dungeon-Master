@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-
+using Newtonsoft.Json.Linq;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
     //References
-    [SerializeField] private Player player;
+    private Player player;
+    private InventoryManager inventoryManager;
     public FloatingTextManager floatingTextManager;
     public HUD hud;
 
@@ -29,10 +30,15 @@ public class GameManager : MonoBehaviour
             Destroy(player.gameObject);
             Destroy(hud.gameObject);
         }
+    }
 
+    private void Start()
+    {
+        player = Player.instance;
+        inventoryManager = InventoryManager.instance;
         CreateXpTable();
         player.InitializePlayer();
-        playerData.InitializePlayerData();       
+        playerData.InitializePlayerData();
         //File.Delete(@"SaveGame.json");
 
         if (File.Exists(@"SaveGame.json"))
@@ -45,8 +51,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Could not find data. Creating a new data file...");
             StartNewGame();
         }
-    }   
-
+    }
     // Create the data structure that determines how much xp needed for each level to level up for the player
     private void CreateXpTable()
     {
@@ -75,34 +80,38 @@ public class GameManager : MonoBehaviour
 
     public void SaveGame()
     {
-        // Clear arrays/lists
-
         // Rescources data
-        playerData.playerName = player.playerName;
-        playerData.lvl = player.lvl;
-        playerData.xp = player.xp;
-        playerData.gold = player.gold;
-        playerData.position = player.transform.position; // scene
-        playerData.hp = player.hp;
-        playerData.maxHp = player.maxHp;
-        playerData.mp = player.mp;
-        playerData.maxMp = player.maxMp;
+        playerData.PlayerName = player.PlayerName;
+        playerData.Lvl = player.Lvl;
+        playerData.Xp = player.Xp;
+        playerData.Gold = player.Gold;
+        playerData.Position = player.transform.position;
+        playerData.Hp = player.Hp;
+        playerData.MaxHp = player.MaxHp;
+        playerData.Mp = player.Mp;
+        playerData.MaxMp = player.MaxMp;
+        playerData.AttackPower = player.AttackPower;
+        playerData.AbilityPower = player.AbilityPower;
+        playerData.Defense = player.Defense ;
+        playerData.MagicResist = player.MagicResist;
+        playerData.CritChance = player.CritChance;
 
         // Inventory data
-        playerData.lastItem = player.lastItem;
-        for (int i = 0; i < player.lastItem; i++)
+        playerData.LastItem = inventoryManager.LastItem;
+        playerData.Items.Clear();
+        for (int i = 0; i < inventoryManager.LastItem; i++)
         {
-            playerData.items.Add(player.items[i]);
+            playerData.Items.Add(player.Items[i]);
         }
-        playerData.equippedWeaponIndex = player.equippedWeaponIndex;
-        playerData.equippedArmorIndex = player.equippedArmorIndex;
-        playerData.equippedHelmetIndex = player.equippedHelmetIndex;
+        playerData.EquippedWeaponIndex = inventoryManager.EquippedWeaponIndex;
+        playerData.EquippedArmorIndex = inventoryManager.EquippedArmorIndex;
+        playerData.EquippedHelmetIndex = inventoryManager.EquippedHelmetIndex;
 
-        playerData.weapon = player.weapon; // Starts at index 0 of items array
-        if (playerData.equippedHelmetIndex != -1)
-            playerData.helmet = player.helmet;
-        if (playerData.equippedArmorIndex != -1)
-            playerData.armor = player.armor;
+        playerData.Weapon = player.weapon;
+        if (playerData.EquippedHelmetIndex != -1)
+            playerData.Helmet = player.helmet;
+        if (playerData.EquippedArmorIndex != -1)
+            playerData.Armor = player.armor;
 
         // Write to file
         string json = JsonUtility.ToJson(playerData);
@@ -122,32 +131,37 @@ public class GameManager : MonoBehaviour
         }
 
         // Rescources data
-        player.playerName = playerData.playerName;
-        player.lvl = playerData.lvl;
-        player.xp = playerData.xp;
-        player.gold = playerData.gold;
-        player.hp = playerData.hp;
-        player.maxHp = playerData.maxHp;
-        player.mp = playerData.mp;
-        player.maxMp = playerData.maxMp;
+        player.PlayerName = playerData.PlayerName;
+        player.Lvl = playerData.Lvl;
+        player.Xp = playerData.Xp;
+        player.Gold = playerData.Gold;
+        player.Hp = playerData.Hp;
+        player.MaxHp = playerData.MaxHp;
+        player.Mp = playerData.Mp;
+        player.MaxMp = playerData.MaxMp;
+        player.AttackPower = playerData.AttackPower;
+        player.AbilityPower = playerData.AbilityPower;
+        player.Defense = playerData.Defense;
+        player.MagicResist = playerData.MagicResist;
+        player.CritChance = playerData.CritChance;
 
         // Inventory data
-        player.lastItem = playerData.lastItem;
-        player.equippedWeaponIndex = playerData.equippedWeaponIndex;
-        player.equippedArmorIndex = playerData.equippedArmorIndex;
-        player.equippedHelmetIndex = playerData.equippedHelmetIndex;
+        inventoryManager.LastItem = playerData.LastItem;
+        inventoryManager.EquippedWeaponIndex = playerData.EquippedWeaponIndex;
+        inventoryManager.EquippedArmorIndex = playerData.EquippedArmorIndex;
+        inventoryManager.EquippedHelmetIndex = playerData.EquippedHelmetIndex;
 
         // Items data
-        for (int i = 0; i < playerData.lastItem; i++)
+        for (int i = 0; i < playerData.LastItem; i++)
         {
-            player.items[i] = Resources.Load<Item>("Items/" + playerData.items[i].name);
-            Debug.Log(i + " " + player.items[i].name);
+            player.Items[i] = Resources.Load<Item>("Items/" + playerData.Items[i].name);
         }
-        player.EquipItem((Weapon)playerData.items[playerData.equippedWeaponIndex]);
-        if (player.equippedArmorIndex != -1)
-            player.EquipItem((Armor)playerData.items[playerData.equippedArmorIndex]);
-        if (player.equippedHelmetIndex != -1)
-            player.EquipItem((Helmet)playerData.items[playerData.equippedHelmetIndex]);
+
+        player.EquipItem((Weapon)playerData.Items[playerData.EquippedWeaponIndex]);
+        if (inventoryManager.EquippedArmorIndex != -1)
+            player.EquipItem((Armor)playerData.Items[playerData.EquippedArmorIndex]);
+        if (inventoryManager.EquippedHelmetIndex != -1)
+            player.EquipItem((Helmet)playerData.Items[playerData.EquippedHelmetIndex]);
 
         // Spawn point
         RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();

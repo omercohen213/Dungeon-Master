@@ -4,43 +4,57 @@ using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : Fighter
 {
+    public static Player instance;
+
     [SerializeField] private float speed = 2;
-
-    [SerializeField] private HUD hud;
-
+    
     // Resources
-    // ------------------ Change protection level ------------------
-    public int gold;
-    public int xp;
-    public int lvl;
-    public int mp;
-    public int maxMp;
-    public string playerName;
-    public int hp;
-    public int maxHp;
-    public int attackPower; // private set
-    public int abilityPower;
-    public int defense;
-    public int magicResist;
-    public float critChance;
-    public int abilityPoints;
-    public int attributePoints { get; private set; }
+    private int lvl;
+    private int xp;
+    private int gold; 
+    private int hp;
+    private int maxHp;
+    private int mp;
+    private int maxMp;
+    private int attackPower;
+    private int abilityPower;
+    private int defense;
+    private int magicResist;
+    private float critChance;
+    private int abilityPoints;
+    private int attributePoints;
+    private string playerName;
+    public int Lvl { get => lvl; set => lvl = value; }
+    public int Xp { get => xp; set => xp = value; }
+    public int Gold { get => gold; set => gold = value; }
+    public int Hp { get => hp; set => hp = value; }
+    public int MaxHp { get => maxHp; set => maxHp = value; }
+    public int Mp { get => mp; set => mp = value; }
+    public int MaxMp { get => maxMp; set => maxMp = value; }
+    public int AttackPower { get => attackPower; set => attackPower = value; }
+    public int AbilityPower { get => abilityPower; set => abilityPower = value; }
+    public int Defense { get => defense; set => defense = value; }
+    public int MagicResist { get => magicResist; set => magicResist = value; }
+    public float CritChance { get => critChance; set => critChance = value; }
+    public int AbilityPoints { get => abilityPoints; set => abilityPoints = value; }
+    public int AttributePoints { get => attributePoints; set => attributePoints = value; }
+    public string PlayerName { get => playerName; set => playerName = value; }
+
 
     // Damage immunity 
     protected float immuneTime = 1.0f;
     protected float lastImmune;
 
     // Inventory
-    public Item[] items;
+    private Item[] items;
+    public Item[] Items { get => items; set => items = value; }
 
     // ------------------Move it to inventoryManager and save data ------------------
-    public int lastItem; // Number of items the player has
-    public int equippedWeaponIndex;
-    public int equippedArmorIndex;
-    public int equippedHelmetIndex;
+    
 
     public Weapon weapon;
     public Armor armor;
@@ -49,28 +63,33 @@ public class Player : Fighter
 
     // Player Name
     private Camera cam;
-    private GameObject playerNameText;
+    private GameObject playerNameGo;
     [SerializeField] public Vector3 offset;
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private HUD hud;
+    private GameManager gameManager;
+
+    private void Awake()
     {
-        Debug.Log("OnSceneLoaded: " + scene.name);
-        cam = Camera.main;
+        instance = this;
     }
 
     protected override void Start()
     {
         base.Start();
         cam = Camera.main;
+        hud = HUD.instance;
+        gameManager = GameManager.instance;
         SceneManager.sceneLoaded += OnSceneLoaded;
-        playerNameText = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
+        playerNameGo = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
+        playerNameGo.GetComponent<Text>().text = playerName;
     }
 
     private void Update()
     {
         Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
-        if (playerNameText.transform.position != pos)
-            playerNameText.transform.position = pos;
+        if (playerNameGo.transform.position != pos)
+            playerNameGo.transform.position = pos;
     }
 
     private void FixedUpdate()
@@ -82,6 +101,12 @@ public class Player : Fighter
         UpdateMotor(new Vector3(x, y, 0), speed);
     }
 
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        cam = Camera.main;
+    }
+
     // Recieve damage
     protected override void RecieveDamage(Damage dmg)
     {
@@ -90,15 +115,15 @@ public class Player : Fighter
             lastImmune = Time.time;
             if (dmg.dmgAmount > 0)
             {
-                hp -= dmg.dmgAmount;
+                Hp -= dmg.dmgAmount;
                 FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, Color.red, dmg.origin, "Hit", 2.0f);
             }
             else FloatingTextManager.instance.ShowFloatingText("0", 30, Color.red, dmg.origin, "Hit", 2.0f);
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
 
-            if (hp <= 0)
+            if (Hp <= 0)
             {
-                hp = 0;
+                Hp = 0;
                 Death();
             }
         }
@@ -106,19 +131,19 @@ public class Player : Fighter
     }
     public void GrantGold(int amount)
     {
-        gold += amount;
+        Gold += amount;
     }
 
     public void GrantXp(int xpAmount)
     {
-        xp += xpAmount;
-        if (xp > GameManager.instance.XpToLevelUp(lvl))
+        Xp += xpAmount;
+        if (Xp > gameManager.XpToLevelUp(Lvl))
         {
-            xp = 0;
+            Xp = 0;
             OnLevelUp();
         }
         FloatingTextManager.instance.ShowFloatingText("+" + xpAmount + "xp", 12, Color.magenta, transform.position, "GetResource", 1.5f);
-        GameManager.instance.SaveGame();
+        gameManager.SaveGame();
         hud.onXpChange();
     }
 
@@ -127,13 +152,13 @@ public class Player : Fighter
         // To not instantly show lvl up text on load 
         if (Time.time > 1)
             FloatingTextManager.instance.ShowFloatingText("Level Up!", 30, Color.magenta, transform.position, "GetResource", 1.5f);
-        lvl++;
-        hp = maxHp;
-        abilityPoints++;
-        attributePoints++;
+        Lvl++;
+        Hp = MaxHp;
+        AbilityPoints++;
+        AttributePoints++;
         hud.onHpChange();
         hud.onLevelChange();
-    } 
+    }
 
     public Weapon GetWeapon()
     {
@@ -156,19 +181,19 @@ public class Player : Fighter
                 Weapon weapon = (Weapon)item;
                 this.weapon = weapon;
                 transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                attackPower += weapon.attackPower;
+                AttackPower += weapon.attackPower;
                 break;
             case "Armor":
                 Armor armor = (Armor)item;
                 this.armor = armor;
                 transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                defense += armor.defense;
+                Defense += armor.defense;
                 break;
             case "Helmet":
                 Helmet helmet = (Helmet)item;
                 this.helmet = helmet;
-                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite; 
-                defense += helmet.defense;
+                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                Defense += helmet.defense;
                 break;
         }
     }
@@ -178,24 +203,24 @@ public class Player : Fighter
         switch (item.type)
         {
             case "Weapon":
-                attackPower -= ((Weapon)item).attackPower;
+                AttackPower -= ((Weapon)item).attackPower;
                 break;
             case "Armor":
                 armor = null;
                 transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
-                defense -= ((Armor)item).defense;
+                Defense -= ((Armor)item).defense;
                 break;
             case "Helmet":
                 helmet = null;
                 transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                defense -= ((Helmet)item).defense;
+                Defense -= ((Helmet)item).defense;
                 break;
-        }       
+        }
     }
 
     public void InitializePlayer()
     {
-        items = new Item[15];
-        
+        Items = new Item[15];
+
     }
 }

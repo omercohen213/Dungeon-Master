@@ -15,7 +15,7 @@ public class WeaponManager : Collidable
             Damage dmg = new Damage();
             dmg.origin = transform.position;
             float rnd = Random.Range(0.8f, 1);
-            dmg.dmgAmount = Mathf.RoundToInt(player.attackPower * rnd);
+            dmg.dmgAmount = Mathf.RoundToInt(player.AttackPower * rnd);
             dmg.pushForce = player.GetWeapon().pushForce;
 
             coll.SendMessage("RecieveDamage", dmg);
