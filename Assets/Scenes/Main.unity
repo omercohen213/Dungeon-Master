@@ -1984,6 +1984,7 @@ GameObject:
   - component: {fileID: 325733185}
   - component: {fileID: 325733184}
   - component: {fileID: 325733187}
+  - component: {fileID: 325733188}
   m_Layer: 5
   m_Name: Quests
   m_TagString: Untagged
@@ -2095,7 +2096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f118f854869bc294987ca7bf111a87f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator: {fileID: 325733188}
   player: {fileID: 628875940}
   npcs:
   - {fileID: 335385877}
@@ -2116,6 +2117,26 @@ MonoBehaviour:
   activeQuests: {fileID: 577141277}
   activeQuestName: {fileID: 1142922748}
   activeQuestProgress: {fileID: 937200777}
+--- !u!95 &325733188
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325733181}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0bc2b5bf514ef4d418fba0a043dffb39, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &335385873
 GameObject:
   m_ObjectHideFlags: 0
@@ -9837,7 +9858,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Instructions
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9122727191956382752, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
 --- !u!1 &519420028
 GameObject:
@@ -10653,14 +10675,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6d1f39b76ebbdd4eb273cbb02476584, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  lastItem: 0
-  equippedWeaponIndex: 0
-  equippedArmorIndex: 0
-  equippedHelmetIndex: 0
-  weapon: {fileID: 0}
-  armor: {fileID: 0}
-  helmet: {fileID: 0}
   activeQuests: []
   offset: {x: 0, y: -0.1, z: 0}
 --- !u!114 &628875941
@@ -14442,7 +14456,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Instructions (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9122727191956382752, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
 --- !u!1001 &1079378622
 PrefabInstance:
@@ -16244,7 +16259,6 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  player: {fileID: 628875940}
 --- !u!1 &1519917354
 GameObject:
   m_ObjectHideFlags: 0
@@ -19519,11 +19533,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1265727083696483336, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0033333334
+      value: 0.003333333
       objectReference: {fileID: 0}
     - target: {fileID: 1265727083696483336, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0033333334
+      value: 0.003333333
       objectReference: {fileID: 0}
     - target: {fileID: 1265727083696483336, guid: 2682aac94a19c20459b119c48f6e12e5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -20228,7 +20242,7 @@ PrefabInstance:
     - target: {fileID: 8187648105883431960, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -753418325, guid: 54c1742ee51db714b8104aff90e8a12b, type: 3}
+      objectReference: {fileID: 1937455646, guid: 94b0fcaa4dd229a48b13fa86d880faee, type: 3}
     - target: {fileID: 8187648105883431961, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
       propertyPath: m_RootOrder
       value: 2

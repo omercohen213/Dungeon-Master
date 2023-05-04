@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Enemy : Fighter
+public class Enemy : Fighter , IDamageable
 {
     // Drops
     [SerializeField] private int xpAmount = 10;
@@ -115,45 +115,11 @@ public class Enemy : Fighter
         }
     }
 
-    protected override void RecieveDamage(Damage dmg)
-    {
-        if (Time.time - lastImmune > immuneTime)
-        {
-            
-            lastImmune = Time.time;
-            if(dmg.dmgAmount > 0)
-            {
-                hp -= dmg.dmgAmount;
-                FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
-            }
-            else FloatingTextManager.instance.ShowFloatingText("0", 30, new Color(0.98f, 0.37f, 0), dmg.origin, "Hit", 2.0f);
-            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-
-            if (hp <= 0)
-            {
-                hp = 0;
-                Death();
-            }
-        }
-        onHpChange();
-    }
-
     public void onHpChange()
     {
         hpText.text = hp + " / " + maxHp;
         float hpRatio = (float)hp / (float)maxHp;
         hpBar.localScale = new Vector3(hpRatio, 1, 1);
-    }
-
-    protected override void Death()
-    {
-        gameObject.SetActive(false);
-        player.GrantXp(xpAmount);
-        DropItem();
-        Invoke("Respawn", 3);
-        foreach (Quest quest in player.activeQuests)
-            if (quest.enemiesIds.Contains(id))
-                QuestManager.instance.UpdateActiveQuest(quest);
     }
 
     private void DropItem()
@@ -201,4 +167,37 @@ public class Enemy : Fighter
         Destroy(gameObject);
     }
 
+    public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
+    {
+        if (Time.time - lastImmune > immuneTime)
+        {
+
+            lastImmune = Time.time;
+            if (damageAmount > 0)
+            {
+                hp -= damageAmount;
+                FloatingTextManager.instance.ShowFloatingText(damageAmount.ToString(), 30, new Color(0.98f, 0.37f, 0), origin, "Hit", 2.0f);
+            }
+            else FloatingTextManager.instance.ShowFloatingText("0", 30, new Color(0.98f, 0.37f, 0), origin, "Hit", 2.0f);
+            pushDirection = (transform.position - origin).normalized * pushForce;
+
+            if (hp <= 0)
+            {
+                hp = 0;
+                Death();
+            }
+        }
+        onHpChange();
+    }
+
+    public void Death()
+    {
+        gameObject.SetActive(false);
+        player.GrantXp(xpAmount);
+        DropItem();
+        Invoke("Respawn", 3);
+        foreach (Quest quest in player.activeQuests)
+            if (quest.enemiesIds.Contains(id))
+                QuestManager.instance.UpdateActiveQuest(quest);
+    }
 }

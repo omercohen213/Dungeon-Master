@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +25,11 @@ public class StatsManager : MonoBehaviour
 
         //Debug.Log(player.GetWeapon().itemName);
         Image weaponImage = weapon.GetComponent<Image>();
-        weaponImage.sprite = player.weapon.GetComponent<SpriteRenderer>().sprite;
+        weaponImage.sprite = player.Weapon.GetComponent<SpriteRenderer>().sprite;
+    }
+
+    // Opening/closing stats
+    public void OnInventoryClick()
+    {
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using Newtonsoft.Json.Linq;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     private PlayerData playerData = new PlayerData();
     private List<int> xpTable = new List<int>();
+    private string saveFilePath;
 
     private void Awake()
     {
@@ -39,9 +40,11 @@ public class GameManager : MonoBehaviour
         CreateXpTable();
         player.InitializePlayer();
         playerData.InitializePlayerData();
-        //File.Delete(@"SaveGame.json");
 
-        if (File.Exists(@"SaveGame.json"))
+        saveFilePath = Application.persistentDataPath + "/SaveGame.json";
+        //File.Delete(saveFilePath);
+        //Debug.Log(Application.persistentDataPath);
+        if (File.Exists(saveFilePath))
         {
             Debug.Log("Loading data...");
             LoadGame();
@@ -92,7 +95,7 @@ public class GameManager : MonoBehaviour
         playerData.MaxMp = player.MaxMp;
         playerData.AttackPower = player.AttackPower;
         playerData.AbilityPower = player.AbilityPower;
-        playerData.Defense = player.Defense ;
+        playerData.Defense = player.Defense;
         playerData.MagicResist = player.MagicResist;
         playerData.CritChance = player.CritChance;
 
@@ -107,28 +110,22 @@ public class GameManager : MonoBehaviour
         playerData.EquippedArmorIndex = inventoryManager.EquippedArmorIndex;
         playerData.EquippedHelmetIndex = inventoryManager.EquippedHelmetIndex;
 
-        playerData.Weapon = player.weapon;
+        playerData.Weapon = player.Weapon;
         if (playerData.EquippedHelmetIndex != -1)
-            playerData.Helmet = player.helmet;
+            playerData.Helmet = player.Helmet;
         if (playerData.EquippedArmorIndex != -1)
-            playerData.Armor = player.armor;
+            playerData.Armor = player.Armor;
 
         // Write to file
         string json = JsonUtility.ToJson(playerData);
-        using (StreamWriter streamWriter = new StreamWriter("SaveGame.json"))
-        {
-            streamWriter.Write(json);
-        }
+        File.WriteAllText(saveFilePath, json);
     }
 
     public void LoadGame()
     {
         // Read from file
-        using (StreamReader streamReader = new StreamReader("SaveGame.json"))
-        {
-            string json = streamReader.ReadToEnd();
-            playerData = JsonUtility.FromJson<PlayerData>(json);
-        }
+        string json = File.ReadAllText(saveFilePath);
+        playerData = JsonUtility.FromJson<PlayerData>(json);
 
         // Rescources data
         player.PlayerName = playerData.PlayerName;
@@ -154,14 +151,20 @@ public class GameManager : MonoBehaviour
         // Items data
         for (int i = 0; i < playerData.LastItem; i++)
         {
+            //Debug.Log(playerData.Items[i].name);
             player.Items[i] = Resources.Load<Item>("Items/" + playerData.Items[i].name);
+         }
+        
+        Weapon weapon = (Weapon)playerData.Items[playerData.EquippedWeaponIndex];
+        player.EquipItem(weapon);
+        if (inventoryManager.EquippedArmorIndex != -1){
+            Armor armor = (Armor)playerData.Items[playerData.EquippedArmorIndex];
+            player.EquipItem(armor);
         }
-
-        player.EquipItem((Weapon)playerData.Items[playerData.EquippedWeaponIndex]);
-        if (inventoryManager.EquippedArmorIndex != -1)
-            player.EquipItem((Armor)playerData.Items[playerData.EquippedArmorIndex]);
-        if (inventoryManager.EquippedHelmetIndex != -1)
-            player.EquipItem((Helmet)playerData.Items[playerData.EquippedHelmetIndex]);
+        if (inventoryManager.EquippedHelmetIndex != -1) {
+            Helmet helmet = (Helmet)playerData.Items[playerData.EquippedHelmetIndex];
+            player.EquipItem(helmet);
+        }
 
         // Spawn point
         RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
@@ -170,16 +173,19 @@ public class GameManager : MonoBehaviour
         float portalHeight = portalRectTransform.rect.height * 0.16f;
         player.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
     }
-
     private void StartNewGame()
     {
         playerData.ResetPlayerData();
-        // Write to file
         string json = JsonUtility.ToJson(playerData);
-        using (StreamWriter streamWriter = new StreamWriter("SaveGame.json"))
+        try
         {
-            streamWriter.Write(json);
+            File.WriteAllText(saveFilePath, json);
         }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to save JSON: " + e.Message);
+        }
+
         LoadGame();
     }
 }

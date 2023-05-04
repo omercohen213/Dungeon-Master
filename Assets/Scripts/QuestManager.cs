@@ -18,7 +18,6 @@ public class QuestManager : MonoBehaviour
 
     // QuestView objects
     [SerializeField] private GameObject QuestsExitButton;
-    //[SerializeField] private GameObject questsView;
     [SerializeField] private GameObject questPrefab;
     [SerializeField] private Transform content;
 
@@ -47,7 +46,12 @@ public class QuestManager : MonoBehaviour
 
     private void Start()
     {
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
+        if (player.activeQuests.Count == 0)
+        {
+            Debug.Log("ok");
+            animator.SetTrigger("NoQuest");
+        }
         quests.gameObject.SetActive(false);
         questInfo.gameObject.SetActive(false);
     }
@@ -160,16 +164,17 @@ public class QuestManager : MonoBehaviour
         UpdateQuests(npc);
         questInfo.gameObject.SetActive(false);
         npc.SetNpcFloatingText("?");
+        animator.SetTrigger("QuestTaken");
 
         activeQuests.gameObject.SetActive(true);
         Vector3 pos = activeQuestPrefab.transform.position - new Vector3(0, 100, 0);
-        GameObject activeQuestNameGo = Instantiate(activeQuestPrefab, pos, Quaternion.identity, activeQuests.transform);
+        Instantiate(activeQuestPrefab, pos, Quaternion.identity, activeQuests.transform);
         activeQuestName.text = quest.name;
         activeQuestName.color = new Color(0, 1, 0, 1);
         activeQuestName.fontSize = 10;
         pos = activeQuestPrefab.transform.position - new Vector3(0, 22, 0);
-        GameObject activeQuestProgressGo = Instantiate(activeQuestPrefab, pos, Quaternion.identity, activeQuests.transform);
-        activeQuestProgress.text = "Monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount;
+        // activeQuestProgressGo = Instantiate(activeQuestPrefab, pos, Quaternion.identity, activeQuests.transform);
+        activeQuestProgress.text = "Little monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount;
         activeQuestProgress.color = Color.white;
         activeQuestProgress.fontSize = 10;
     }

@@ -19,16 +19,6 @@ public class Fighter : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    protected virtual void RecieveDamage(Damage dmg)
-    {
-        Debug.Log("hit");
-    }
-
-    protected virtual void Death()
-    {
-        Debug.Log("dead");
-    }
-
     protected virtual void UpdateMotor(Vector3 input, float speed)
     {
         //reset moveDelta

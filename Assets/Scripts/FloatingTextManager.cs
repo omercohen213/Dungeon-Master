@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +24,10 @@ public class FloatingTextManager : MonoBehaviour
         txt.color = color;
 
         if (animTrigger != null)
+        {
+            Debug.Log(animTrigger);
             floatingText.gameObject.GetComponentInChildren<Animator>().SetTrigger(animTrigger);
+        }
 
         Destroy(floatingText, destroyTimer);
     }

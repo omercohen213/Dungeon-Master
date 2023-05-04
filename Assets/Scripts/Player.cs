@@ -6,11 +6,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Player : Fighter
+public class Player : Fighter , IDamageable
 {
     public static Player instance;
 
-    [SerializeField] private float speed = 2;
+    private float speed = 2;
     
     // Resources
     private int lvl;
@@ -53,12 +53,13 @@ public class Player : Fighter
     private Item[] items;
     public Item[] Items { get => items; set => items = value; }
 
-    // ------------------Move it to inventoryManager and save data ------------------
-    
+    private Weapon weapon;
+    private Armor armor;
+    private Helmet helmet;
+    public Weapon Weapon { get => weapon; set => weapon = value; }
+    public Armor Armor { get => armor; set => armor = value; }
+    public Helmet Helmet { get => helmet; set => helmet = value; }
 
-    public Weapon weapon;
-    public Armor armor;
-    public Helmet helmet;
     public List<Quest> activeQuests;
 
     // Player Name
@@ -106,29 +107,7 @@ public class Player : Fighter
         Debug.Log("OnSceneLoaded: " + scene.name);
         cam = Camera.main;
     }
-
-    // Recieve damage
-    protected override void RecieveDamage(Damage dmg)
-    {
-        if (Time.time - lastImmune > immuneTime)
-        {
-            lastImmune = Time.time;
-            if (dmg.dmgAmount > 0)
-            {
-                Hp -= dmg.dmgAmount;
-                FloatingTextManager.instance.ShowFloatingText(dmg.dmgAmount.ToString(), 30, Color.red, dmg.origin, "Hit", 2.0f);
-            }
-            else FloatingTextManager.instance.ShowFloatingText("0", 30, Color.red, dmg.origin, "Hit", 2.0f);
-            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-
-            if (Hp <= 0)
-            {
-                Hp = 0;
-                Death();
-            }
-        }
-        hud.onHpChange();
-    }
+    
     public void GrantGold(int amount)
     {
         Gold += amount;
@@ -160,40 +139,24 @@ public class Player : Fighter
         hud.onLevelChange();
     }
 
-    public Weapon GetWeapon()
-    {
-        return weapon;
-    }
-    public Armor GetArmor()
-    {
-        return armor;
-    }
-    public Helmet GetHelmet()
-    {
-        return helmet;
-    }
-
     public void EquipItem(Item item)
     {
         switch (item.type)
         {
             case "Weapon":
                 Weapon weapon = (Weapon)item;
-                this.weapon = weapon;
+                this.Weapon = weapon;
                 transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                AttackPower += weapon.attackPower;
                 break;
             case "Armor":
                 Armor armor = (Armor)item;
-                this.armor = armor;
+                this.Armor = armor;
                 transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                Defense += armor.defense;
                 break;
             case "Helmet":
                 Helmet helmet = (Helmet)item;
-                this.helmet = helmet;
+                this.Helmet = helmet;
                 transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                Defense += helmet.defense;
                 break;
         }
     }
@@ -202,25 +165,67 @@ public class Player : Fighter
     {
         switch (item.type)
         {
-            case "Weapon":
-                AttackPower -= ((Weapon)item).attackPower;
-                break;
+            // (Weapon cannot be unequipped)
             case "Armor":
-                armor = null;
+                Armor = null;
                 transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
-                Defense -= ((Armor)item).defense;
                 break;
             case "Helmet":
-                helmet = null;
+                Helmet = null;
                 transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                Defense -= ((Helmet)item).defense;
                 break;
         }
+    }
+
+    // Return the total amount of defense including items
+    public int GetTotalDefense()
+    {
+        if (armor != null && helmet != null)
+            return defense + armor.defense + helmet.defense;
+        else if (armor == null && helmet != null)
+            return defense + helmet.defense;
+        else if (armor != null && helmet == null)
+            return defense + armor.defense;
+        else return defense;
+    }
+
+    // Return the total amount of attack power including items
+    public int GetTotalAttackPower()
+    {
+        return attackPower + weapon.attackPower;
+    }
+
+    // Receive damage
+    public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
+    {
+        if (Time.time - lastImmune > immuneTime)
+        {
+            lastImmune = Time.time;
+            if (damageAmount > 0)
+            {
+                Hp -= damageAmount;
+                FloatingTextManager.instance.ShowFloatingText(damageAmount.ToString(), 30, Color.red, origin, "Hit", 2.0f);
+            }
+            else FloatingTextManager.instance.ShowFloatingText("0", 30, Color.red, origin, "Hit", 2.0f);
+            pushDirection = (transform.position - origin).normalized * pushForce;
+
+            if (Hp <= 0)
+            {
+                Hp = 0;
+                Death();
+            }
+        }
+        hud.onHpChange();
     }
 
     public void InitializePlayer()
     {
         Items = new Item[15];
 
+    }
+
+    public void Death()
+    {
+        Debug.Log("Dead");
     }
 }
