@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using System;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour
 
         saveFilePath = Application.persistentDataPath + "/SaveGame.json";
         //File.Delete(saveFilePath);
-        //Debug.Log(Application.persistentDataPath);
         if (File.Exists(saveFilePath))
         {
             Debug.Log("Loading data...");
@@ -88,7 +87,6 @@ public class GameManager : MonoBehaviour
         playerData.Lvl = player.Lvl;
         playerData.Xp = player.Xp;
         playerData.Gold = player.Gold;
-        playerData.Position = player.transform.position;
         playerData.Hp = player.Hp;
         playerData.MaxHp = player.MaxHp;
         playerData.Mp = player.Mp;
@@ -101,20 +99,15 @@ public class GameManager : MonoBehaviour
 
         // Inventory data
         playerData.LastItem = inventoryManager.LastItem;
-        playerData.Items.Clear();
+        playerData.ItemsId.Clear();
         for (int i = 0; i < inventoryManager.LastItem; i++)
         {
-            playerData.Items.Add(player.Items[i]);
+            playerData.ItemsId.Add(player.Items[i].id);
         }
+
         playerData.EquippedWeaponIndex = inventoryManager.EquippedWeaponIndex;
         playerData.EquippedArmorIndex = inventoryManager.EquippedArmorIndex;
         playerData.EquippedHelmetIndex = inventoryManager.EquippedHelmetIndex;
-
-        playerData.Weapon = player.Weapon;
-        if (playerData.EquippedHelmetIndex != -1)
-            playerData.Helmet = player.Helmet;
-        if (playerData.EquippedArmorIndex != -1)
-            playerData.Armor = player.Armor;
 
         // Write to file
         string json = JsonUtility.ToJson(playerData);
@@ -151,27 +144,24 @@ public class GameManager : MonoBehaviour
         // Items data
         for (int i = 0; i < playerData.LastItem; i++)
         {
-            //Debug.Log(playerData.Items[i].name);
-            player.Items[i] = Resources.Load<Item>("Items/" + playerData.Items[i].name);
-         }
-        
-        Weapon weapon = (Weapon)playerData.Items[playerData.EquippedWeaponIndex];
+            Item item = FindItemById(playerData.ItemsId[i]);
+            player.Items[i] = Resources.Load<Item>("Items/" + item.name);
+        }
+        Weapon weapon = (Weapon)FindItemById(playerData.ItemsId[playerData.EquippedWeaponIndex]);
         player.EquipItem(weapon);
-        if (inventoryManager.EquippedArmorIndex != -1){
-            Armor armor = (Armor)playerData.Items[playerData.EquippedArmorIndex];
+        if (inventoryManager.EquippedArmorIndex != -1)
+        {
+            Armor armor = (Armor)FindItemById(playerData.ItemsId[playerData.EquippedArmorIndex]);
             player.EquipItem(armor);
         }
-        if (inventoryManager.EquippedHelmetIndex != -1) {
-            Helmet helmet = (Helmet)playerData.Items[playerData.EquippedHelmetIndex];
+        if (inventoryManager.EquippedHelmetIndex != -1)
+        {
+            Helmet helmet = (Helmet)FindItemById(playerData.ItemsId[playerData.EquippedHelmetIndex]);
             player.EquipItem(helmet);
         }
 
-        // Spawn point
-        RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
-        Transform portal = GameObject.Find("SpawnPoint").transform;
-        float portalWidth = portalRectTransform.rect.width * 0.16f;
-        float portalHeight = portalRectTransform.rect.height * 0.16f;
-        player.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
+        DungeonManager.instance.SpawnPlayer();
+
     }
     private void StartNewGame()
     {
@@ -181,15 +171,31 @@ public class GameManager : MonoBehaviour
         {
             File.WriteAllText(saveFilePath, json);
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError("Failed to save JSON: " + e.Message);
         }
 
         LoadGame();
     }
+
+    public Item FindItemById(int id)
+    {
+        Object[] assets = Resources.LoadAll("Items/", typeof(ScriptableObject));
+        foreach (Object asset in assets)
+        {
+            ScriptableObject scriptableObject = (ScriptableObject)asset;
+            SerializedObject serializedObject = new SerializedObject(scriptableObject);
+            SerializedProperty property = serializedObject.FindProperty("id");
+            if (property != null && property.intValue == id)
+            {
+                return (Item)scriptableObject;
+            }
+        }
+
+        return null;
+    }
+
 }
-
-
 
 

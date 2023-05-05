@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af3675c3ae51464988c20845f6788e7, type: 3}
   m_Name: Helmet_lvl2
   m_EditorClassIdentifier: 
+  id: 2
   itemName: Great Helmet
   type: Helmet
   requiredLvl: 2
   inverntoryIcon: {fileID: 1435232884, guid: 42e231b5b12626a46af325c9533fc811, type: 3}
   itemSprite: {fileID: 318032050, guid: ccdfab61b8e404d4c9411a7b8ed5c43f, type: 3}
-  spriteName: 
   spriteSize: {x: 0.4, y: 0.4, z: 0}
   price: 260
   dropRate: 50

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dde61b9eabeb92f4dba70db23f6c4ec8, type: 3}
   m_Name: Armor_lvl5
   m_EditorClassIdentifier: 
-  instanceId: 0
+  id: 5
   itemName: Great Armor
   type: Armor
   requiredLvl: 5

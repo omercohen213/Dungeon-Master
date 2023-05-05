@@ -2,8 +2,6 @@ Fix:
 - enemy movement
 - potion in ability bar
 - Active player stats texts
-- Check save & load when changing weapon index
-- Floating text animation
 
 ADD:
 - attribute points

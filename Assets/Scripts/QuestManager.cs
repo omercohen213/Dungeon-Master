@@ -9,11 +9,8 @@ public class QuestManager : MonoBehaviour
     public static QuestManager instance;
 
     // Logic
-    [SerializeField] private Animator animator;
-    [SerializeField] private Player player;
-
+    private Player player;
     [SerializeField] private List<NPC> npcs;
-
     [SerializeField] private GameObject quests;
 
     // QuestView objects
@@ -46,11 +43,13 @@ public class QuestManager : MonoBehaviour
 
     private void Start()
     {
-        animator = GetComponent<Animator>();
+        player = Player.instance;
         if (player.activeQuests.Count == 0)
         {
-            Debug.Log("ok");
-            animator.SetTrigger("NoQuest");
+            foreach (NPC npc in npcs) { 
+                npc.SetNpcFloatingText("!","NoQuest");
+                Debug.Log("no quest");
+            }
         }
         quests.gameObject.SetActive(false);
         questInfo.gameObject.SetActive(false);
@@ -163,8 +162,7 @@ public class QuestManager : MonoBehaviour
         player.activeQuests.Add(quest);
         UpdateQuests(npc);
         questInfo.gameObject.SetActive(false);
-        npc.SetNpcFloatingText("?");
-        animator.SetTrigger("QuestTaken");
+        npc.SetNpcFloatingText("?" , "QuestTaken");
 
         activeQuests.gameObject.SetActive(true);
         Vector3 pos = activeQuestPrefab.transform.position - new Vector3(0, 100, 0);
@@ -183,7 +181,7 @@ public class QuestManager : MonoBehaviour
     {
         player.activeQuests.Remove(quest);
         quest.currentAmount = 0;
-        npc.SetNpcFloatingText("!");
+        npc.SetNpcFloatingText("!", "NoQuest");
         questInfo.gameObject.SetActive(false);
         activeQuests.SetActive(false);
         turnInButton.gameObject.SetActive(false);
@@ -226,7 +224,7 @@ public class QuestManager : MonoBehaviour
         backButton.gameObject.SetActive(false);
         acceptButton.gameObject.SetActive(true);
         declineButton.gameObject.SetActive(true);
-        npc.SetNpcFloatingText("!");
+        npc.SetNpcFloatingText("!", "NoQuest");
         quest.currentAmount = 0;
         UpdateQuests(npc);
     }

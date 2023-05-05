@@ -11,7 +11,6 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] private Image progressBar;
     private float progressTarget;
     private bool gameIsLoading = false;
-    private Player playerToLoad;
 
     private void Awake()
     {
@@ -28,15 +27,14 @@ public class DungeonManager : MonoBehaviour
     }
 
     // Load a new scene adding inbetween a loading screen
-    public async void LoadScene(string sceneName, Player player)
+    public async void LoadScene(string sceneName)
     {
-        playerToLoad = player;
         gameIsLoading = true;
         progressBar.fillAmount = 0;
         progressTarget = 0;
 
         var scene = SceneManager.LoadSceneAsync(sceneName);
-        scene.allowSceneActivation = false;
+        scene.allowSceneActivation = false;    
         LoadingScreen.SetActive(true);
 
         do
@@ -68,7 +66,7 @@ public class DungeonManager : MonoBehaviour
     }
 
     // Spawn player on scene loaded
-    private void SpawnPlayer()
+    public void SpawnPlayer()
     {
         // Spawn point
         RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
@@ -76,6 +74,6 @@ public class DungeonManager : MonoBehaviour
         float portalWidth = portalRectTransform.rect.width * 0.16f;
         float portalHeight = portalRectTransform.rect.height * 0.16f;
 
-        playerToLoad.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
+        Player.instance.transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
     }
 }

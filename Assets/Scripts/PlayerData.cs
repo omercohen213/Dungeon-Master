@@ -36,8 +36,8 @@ public class PlayerData
     public string PlayerName { get => playerName; set => playerName = value; }
 
     // Inventory items
-    [SerializeField] private List<Item> items;
-    public List<Item> Items { get => items; set => items = value; }
+    [SerializeField] private List<int> itemsId;
+    public List<int> ItemsId { get => itemsId; set => itemsId = value; }
 
     [SerializeField] private int lastItem; // Number of items the player owns
     [SerializeField] private int equippedWeaponIndex;
@@ -48,21 +48,13 @@ public class PlayerData
     public int EquippedArmorIndex { get => equippedArmorIndex; set => equippedArmorIndex = value; }
     public int EquippedHelmetIndex { get => equippedHelmetIndex; set => equippedHelmetIndex = value; }
 
-    // Equipped items
-    [SerializeField] private Weapon weapon;
-    [SerializeField] private Armor armor;
-    [SerializeField] private Helmet helmet;
-    public Weapon Weapon { get => weapon; set => weapon = value; }
-    public Armor Armor { get => armor; set => armor = value; }
-    public Helmet Helmet { get => helmet; set => helmet = value; }
-
     // On log-in
     public void InitializePlayerData()
     {
-        Items = new List<Item>();
+        ItemsId = new List<int>();
     }
 
-    // On first run
+    // Reset player data to default starting data
     public void ResetPlayerData()
     {
         // Resources
@@ -82,10 +74,7 @@ public class PlayerData
 
         // Starting items
         Weapon startingWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");
-        Weapon = startingWeapon;
-        Armor = null;
-        Helmet = null;
-        Items.Add(startingWeapon);
+        ItemsId.Add(startingWeapon.id);
 
         // Equipped items' index in the items array
         EquippedWeaponIndex = 0;

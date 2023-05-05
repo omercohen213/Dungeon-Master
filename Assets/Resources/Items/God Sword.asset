@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e22e6939929d7e40b22156926d0719d, type: 3}
   m_Name: God Sword
   m_EditorClassIdentifier: 
+  id: 4
   itemName: God Sword
   type: Weapon
   requiredLvl: 1265
@@ -20,7 +21,6 @@ MonoBehaviour:
   spriteSize: {x: 0.5, y: 0.5, z: 0}
   price: 500000
   dropRate: 1
-  minDmg: 25665
-  maxDmg: 29885
+  attackPower: 0
   range: 2
   pushForce: 2

@@ -16,7 +16,10 @@ public class Chest : Collectable
             player.GrantGold(goldAmount);
             GameManager.instance.SaveGame();
             hud.onGoldChange();
-            FloatingTextManager.instance.ShowFloatingText("+" + goldAmount + " gold!", 20, Color.yellow, transform.position, "GetResource" , 1.5f);
+            string text = "+" + goldAmount + " gold!";
+            int fontSize = 20;
+            float destroyTimer = 1.5f;
+            FloatingTextManager.instance.ShowFloatingText(text, fontSize, Color.yellow, transform.position, "GetResource" , destroyTimer);
         }
     }
 

@@ -14,24 +14,12 @@ public class NPC : Collidable
     [SerializeField] public int nextQuestIndex;
 
 
-    public void SetNpcFloatingText(string text)
+    public void SetNpcFloatingText(string text, string animTrigger)
     {
         NpcFloatingText.text = text;
+        NpcFloatingText.GetComponent<Animator>().SetTrigger(animTrigger);
     }
 
-    protected override void Start()
-    {
-        base.Start();    
-        foreach (Quest quest in quests)
-        {
-            if (quest.isCompleted())
-            {
-                NpcFloatingText.text = "?";
-                return;
-            }
-            else NpcFloatingText.text = "!";
-        }
-    }
     protected override void OnCollide(Collider2D coll)
     {
         if (coll.name == "Player")

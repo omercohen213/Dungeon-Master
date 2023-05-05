@@ -25,7 +25,6 @@ public class FloatingTextManager : MonoBehaviour
 
         if (animTrigger != null)
         {
-            Debug.Log(animTrigger);
             floatingText.gameObject.GetComponentInChildren<Animator>().SetTrigger(animTrigger);
         }
 

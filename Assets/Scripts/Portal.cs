@@ -13,7 +13,7 @@ public class Portal : Collidable
         {           
             isLoaded = false;
             playerToTeleport = coll.GetComponent<Player>();
-            DungeonManager.instance.LoadScene(sceneToLoad, playerToTeleport);
+            DungeonManager.instance.LoadScene(sceneToLoad);
 
             // Creating a delay to prevent the scene being loaded many times
             Task.Run(async delegate

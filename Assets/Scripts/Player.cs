@@ -61,6 +61,7 @@ public class Player : Fighter , IDamageable
     public Helmet Helmet { get => helmet; set => helmet = value; }
 
     public List<Quest> activeQuests;
+    //public List<Quest> ActiveQuests { get => activeQuests; set => activeQuests = value; }
 
     // Player Name
     private Camera cam;
@@ -121,7 +122,10 @@ public class Player : Fighter , IDamageable
             Xp = 0;
             OnLevelUp();
         }
-        FloatingTextManager.instance.ShowFloatingText("+" + xpAmount + "xp", 12, Color.magenta, transform.position, "GetResource", 1.5f);
+        string text = "+" + xpAmount + "xp";
+        int fontSize = 20;
+        float destroyTimer = 1.5f;
+        FloatingTextManager.instance.ShowFloatingText(text, fontSize, Color.magenta, transform.position, "GetResource", destroyTimer);
         gameManager.SaveGame();
         hud.onXpChange();
     }
