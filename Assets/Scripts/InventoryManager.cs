@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -43,7 +45,6 @@ public class InventoryManager : MonoBehaviour
     private void Start()
     {
         player = Player.instance;
-
         // Create the item list in the inventory and its children
         for (int i = 0; i <= inventorySpace; i++)
         {

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Portal : Collidable
 {
-    [SerializeField] private string sceneToLoad;
     private Player playerToTeleport;
+    [SerializeField] private string sceneToLoad;
     public bool isLoaded = true;
 
     protected override void OnCollide(Collider2D coll)

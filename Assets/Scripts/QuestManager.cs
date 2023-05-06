@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class QuestManager : MonoBehaviour
     private Player player;
     [SerializeField] private List<NPC> npcs;
     [SerializeField] private GameObject quests;
+    private bool showFloatingText = true; // Quest Completion floating text
 
     // QuestView objects
     [SerializeField] private GameObject QuestsExitButton;
@@ -44,13 +46,13 @@ public class QuestManager : MonoBehaviour
     private void Start()
     {
         player = Player.instance;
-        if (player.activeQuests.Count == 0)
+        if (player.ActiveQuests.Count == 0)
         {
             foreach (NPC npc in npcs) { 
                 npc.SetNpcFloatingText("!","NoQuest");
-                Debug.Log("no quest");
             }
         }
+        activeQuests.SetActive(false);
         quests.gameObject.SetActive(false);
         questInfo.gameObject.SetActive(false);
     }
@@ -159,7 +161,7 @@ public class QuestManager : MonoBehaviour
 
     public void AcceptQuest(Quest quest, NPC npc)
     {
-        player.activeQuests.Add(quest);
+        player.ActiveQuests.Add(quest);
         UpdateQuests(npc);
         questInfo.gameObject.SetActive(false);
         npc.SetNpcFloatingText("?" , "QuestTaken");
@@ -179,7 +181,7 @@ public class QuestManager : MonoBehaviour
 
     public void GiveUpQuest(Quest quest, NPC npc)
     {
-        player.activeQuests.Remove(quest);
+        player.ActiveQuests.Remove(quest);
         quest.currentAmount = 0;
         npc.SetNpcFloatingText("!", "NoQuest");
         questInfo.gameObject.SetActive(false);
@@ -204,7 +206,7 @@ public class QuestManager : MonoBehaviour
 
     public bool isQuestInProgress(Quest quest)
     {
-        foreach (Quest activeQuest in player.activeQuests)
+        foreach (Quest activeQuest in player.ActiveQuests)
         {
             if (activeQuest.id == quest.id)
                 return true;
@@ -216,7 +218,7 @@ public class QuestManager : MonoBehaviour
     {
         player.GrantGold(quest.goldReward);
         player.GrantXp(quest.xpReward);
-        player.activeQuests.Remove(quest);
+        player.ActiveQuests.Remove(quest);
         quests.gameObject.SetActive(false);
         activeQuests.SetActive(false);
         turnInButton.gameObject.SetActive(false);
@@ -231,17 +233,26 @@ public class QuestManager : MonoBehaviour
 
     public void UpdateActiveQuest(Quest quest)
     {
-        quest.currentAmount++;
-        //string questProgressText = quest.name + " Monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount;
-        //FloatingTextManager.instance.ShowFloatingText(questProgressText, 12, Color.yellow, activeQuestFloatingText.transform.position, null, 1.5f);
+        quest.currentAmount++;     
         if (quest.isCompleted())
         {
             activeQuestProgress.text = "Monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount + " (Completed!)";
-            //string questCompletedText = quest.name + " Monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount;
-            //FloatingTextManager.instance.ShowFloatingText(questCompletedText, 12, Color.yellow, player.transform.position, null, 1.5f);
+            if (showFloatingText) // Don't show quest completion floating text more than once
+                questCompletedFloatingText(quest);           
         }
         else activeQuestProgress.text = "Monsters killed: " + quest.currentAmount + "/" + quest.requiredAmount;
 
+    }
+
+    private void questCompletedFloatingText(Quest quest)
+    {     
+        string questCompletedText = "Quest Completed!";
+        int fontSize = 12;
+        float destroyTimer = 1.5f;
+        float playerHieght = player.GetComponent<RectTransform>().rect.height;
+        Vector3 position = player.transform.position + new Vector3(0, playerHieght);
+        FloatingTextManager.instance.ShowFloatingText(questCompletedText, fontSize, Color.yellow, position, "GetResource", destroyTimer);
+        showFloatingText = false;   
     }
 
     public void OnExitButton()

@@ -21,4 +21,4 @@ MonoBehaviour:
   spriteSize: {x: 0.4, y: 0.4, z: 0}
   price: 260
   dropRate: 50
-  defense: 30
+  defense: 5

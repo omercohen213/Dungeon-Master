@@ -6,16 +6,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Player : Fighter , IDamageable
+public class Player : Fighter, IDamageable
 {
     public static Player instance;
 
     private float speed = 2;
-    
+
     // Resources
     private int lvl;
     private int xp;
-    private int gold; 
+    private int gold;
     private int hp;
     private int maxHp;
     private int mp;
@@ -44,6 +44,17 @@ public class Player : Fighter , IDamageable
     public int AttributePoints { get => attributePoints; set => attributePoints = value; }
     public string PlayerName { get => playerName; set => playerName = value; }
 
+    // Hp and Mp regeneration
+    private float hpRegenTimer;
+    private float hpRegenDelay = 3f;
+    private readonly int hpRegen = 10;
+    private float mpRegenTimer;
+    private float mpRegenDelay = 1f;
+    private readonly int mpRegen = 5;
+    private float inCombatTimer;
+    private bool isInCombat = false;
+    private readonly float inCombatDelay = 5f;
+    public bool IsInCombat {set => isInCombat = value; }
 
     // Damage immunity 
     protected float immuneTime = 1.0f;
@@ -60,8 +71,8 @@ public class Player : Fighter , IDamageable
     public Armor Armor { get => armor; set => armor = value; }
     public Helmet Helmet { get => helmet; set => helmet = value; }
 
-    public List<Quest> activeQuests;
-    //public List<Quest> ActiveQuests { get => activeQuests; set => activeQuests = value; }
+    private List<Quest> activeQuests;
+    public List<Quest> ActiveQuests { get => activeQuests; set => activeQuests = value; }
 
     // Player Name
     private Camera cam;
@@ -85,6 +96,9 @@ public class Player : Fighter , IDamageable
         SceneManager.sceneLoaded += OnSceneLoaded;
         playerNameGo = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
         playerNameGo.GetComponent<Text>().text = playerName;
+        hpRegenTimer = 0;
+        mpRegenTimer = 0;
+        inCombatTimer = 0;
     }
 
     private void Update()
@@ -92,7 +106,15 @@ public class Player : Fighter , IDamageable
         Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
         if (playerNameGo.transform.position != pos)
             playerNameGo.transform.position = pos;
-    }
+        if (!isInCombat)
+        {
+            RegenerateHpAndMp();
+        }
+        else
+        {
+            UpdateCombatTimer();
+        }
+    }   
 
     private void FixedUpdate()
     {
@@ -108,10 +130,16 @@ public class Player : Fighter , IDamageable
         Debug.Log("OnSceneLoaded: " + scene.name);
         cam = Camera.main;
     }
-    
+
     public void GrantGold(int amount)
     {
         Gold += amount;
+        string text = "+" + amount + " gold!";
+        int fontSize = 20;
+        float destroyTimer = 1.5f;
+        FloatingTextManager.instance.ShowFloatingText(text, fontSize, Color.yellow, transform.position, "GetResource", destroyTimer);
+        GameManager.instance.SaveGame();
+        hud.onGoldChange();
     }
 
     public void GrantXp(int xpAmount)
@@ -138,7 +166,7 @@ public class Player : Fighter , IDamageable
         Lvl++;
         Hp = MaxHp;
         AbilityPoints++;
-        AttributePoints++;
+        AttributePoints += 3;
         hud.onHpChange();
         hud.onLevelChange();
     }
@@ -176,32 +204,77 @@ public class Player : Fighter , IDamageable
                 break;
             case "Helmet":
                 Helmet = null;
-                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
+                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = null;
                 break;
         }
     }
 
-    // Return the total amount of defense including items
-    public int GetTotalDefense()
+    // Regenerate Hp and Mp with corresponding regen
+    public void RegenerateHpAndMp()
     {
-        if (armor != null && helmet != null)
-            return defense + armor.defense + helmet.defense;
-        else if (armor == null && helmet != null)
-            return defense + helmet.defense;
-        else if (armor != null && helmet == null)
-            return defense + armor.defense;
-        else return defense;
+        // Player is dead
+        /*if (hp <= 0)
+        {
+            return;
+        }*/
+
+        // Check if both hp and mp need to be regenerated
+        bool shouldRegenerateHp = hp < maxHp;
+        bool shouldRegenerateMp = mp < maxMp;
+
+        if (!shouldRegenerateHp && !shouldRegenerateMp)
+        {
+            return;
+        }
+
+        if (shouldRegenerateHp)
+        {
+            hpRegenTimer += Time.deltaTime;
+            if (hpRegenTimer >= hpRegenDelay)
+            {
+                hp += hpRegen;
+                if (hp > maxHp)
+                {
+                    hp = maxHp;
+                }
+                hud.onHpChange();
+                hpRegenTimer = 0f;
+            }
+        }
+
+        if (shouldRegenerateMp)
+        {
+            mpRegenTimer += Time.deltaTime;
+            if (mpRegenTimer >= mpRegenDelay)
+            {
+                mp += mpRegen;
+                if (mp > maxMp)
+                {
+                    mp = maxMp;
+                }
+                hud.onMpChange();
+                mpRegenTimer = 0f;
+            }
+        }
     }
 
-    // Return the total amount of attack power including items
-    public int GetTotalAttackPower()
+    // Check if player stopped combat
+    private void UpdateCombatTimer()
     {
-        return attackPower + weapon.attackPower;
+        inCombatTimer -= Time.deltaTime;
+        if (inCombatTimer <= 0f)
+        {
+            isInCombat = false;
+            inCombatTimer = 0f;
+        }
     }
-
+  
     // Receive damage
     public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
     {
+        isInCombat = true;
+        inCombatTimer = inCombatDelay;
+
         if (Time.time - lastImmune > immuneTime)
         {
             lastImmune = Time.time;
@@ -222,12 +295,36 @@ public class Player : Fighter , IDamageable
         hud.onHpChange();
     }
 
+    public bool HasHelmet()
+    {
+        return (InventoryManager.instance.EquippedHelmetIndex != -1);
+    }
+    public bool HasArmor()
+    {
+        return (InventoryManager.instance.EquippedArmorIndex != -1);
+    }
+    // Return the total amount of defense including items
+    public int GetTotalDefense()
+    {
+        if (armor != null && helmet != null)
+            return defense + armor.defense + helmet.defense;
+        else if (armor == null && helmet != null)
+            return defense + helmet.defense;
+        else if (armor != null && helmet == null)
+            return defense + armor.defense;
+        else return defense;
+    }
+    // Return the total amount of attack power including items
+    public int GetTotalAttackPower()
+    {
+        return attackPower + weapon.attackPower;
+    }
+    // Initialize needed variables on game start
     public void InitializePlayer()
     {
-        Items = new Item[15];
-
+        items = new Item[15];
+        activeQuests = new List<Quest>();
     }
-
     public void Death()
     {
         Debug.Log("Dead");

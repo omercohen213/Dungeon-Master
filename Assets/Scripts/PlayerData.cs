@@ -20,6 +20,7 @@ public class PlayerData
     [SerializeField] private float critChance;
     [SerializeField] private Vector3 position;
     [SerializeField] private string playerName;
+    [SerializeField] private int attributePoints;
     public int Gold { get => gold; set => gold = value; }
     public int Xp { get => xp; set => xp = value; }
     public int Lvl { get => lvl; set => lvl = value; }
@@ -34,6 +35,7 @@ public class PlayerData
     public float CritChance { get => critChance; set => critChance = value; }
     public Vector3 Position { get => position; set => position = value; }
     public string PlayerName { get => playerName; set => playerName = value; }
+    public int AttributePoints { get => attributePoints; set => attributePoints = value; }
 
     // Inventory items
     [SerializeField] private List<int> itemsId;
@@ -61,7 +63,6 @@ public class PlayerData
         gold = 0;
         xp = 0;
         lvl = 1;
-        playerName = "New Player";
         hp = 100;
         maxHp = 100;
         mp = 10;
@@ -71,6 +72,8 @@ public class PlayerData
         defense = 1;
         magicResist = 1;
         critChance = 0;
+        playerName = "New Player";
+        attributePoints = 0;
 
         // Starting items
         Weapon startingWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");

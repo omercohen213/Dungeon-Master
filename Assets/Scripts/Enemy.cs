@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Enemy : Fighter , IDamageable
+public class Enemy : Fighter, IDamageable
 {
     // Drops
     [SerializeField] private int xpAmount = 10;
@@ -169,6 +169,7 @@ public class Enemy : Fighter , IDamageable
 
     public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
     {
+        player.IsInCombat = true;
         if (Time.time - lastImmune > immuneTime)
         {
 
@@ -196,8 +197,10 @@ public class Enemy : Fighter , IDamageable
         player.GrantXp(xpAmount);
         DropItem();
         Invoke("Respawn", 3);
-        foreach (Quest quest in player.activeQuests)
+        foreach (Quest quest in player.ActiveQuests)
+        {
             if (quest.enemiesIds.Contains(id))
                 QuestManager.instance.UpdateActiveQuest(quest);
+        }
     }
 }

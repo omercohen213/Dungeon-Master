@@ -13,13 +13,7 @@ public class Chest : Collectable
         {
             collected = true;
             GetComponent<SpriteRenderer>().sprite = emptyChest;
-            player.GrantGold(goldAmount);
-            GameManager.instance.SaveGame();
-            hud.onGoldChange();
-            string text = "+" + goldAmount + " gold!";
-            int fontSize = 20;
-            float destroyTimer = 1.5f;
-            FloatingTextManager.instance.ShowFloatingText(text, fontSize, Color.yellow, transform.position, "GetResource" , destroyTimer);
+            player.GrantGold(goldAmount);         
         }
     }
 

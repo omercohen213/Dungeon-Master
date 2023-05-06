@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
         playerData.Defense = player.Defense;
         playerData.MagicResist = player.MagicResist;
         playerData.CritChance = player.CritChance;
+        playerData.AttributePoints = player.AttributePoints;
 
         // Inventory data
         playerData.LastItem = inventoryManager.LastItem;
@@ -134,6 +135,7 @@ public class GameManager : MonoBehaviour
         player.Defense = playerData.Defense;
         player.MagicResist = playerData.MagicResist;
         player.CritChance = playerData.CritChance;
+        player.AttributePoints = playerData.AttributePoints;
 
         // Inventory data
         inventoryManager.LastItem = playerData.LastItem;
@@ -149,12 +151,12 @@ public class GameManager : MonoBehaviour
         }
         Weapon weapon = (Weapon)FindItemById(playerData.ItemsId[playerData.EquippedWeaponIndex]);
         player.EquipItem(weapon);
-        if (inventoryManager.EquippedArmorIndex != -1)
+        if (player.HasArmor())
         {
             Armor armor = (Armor)FindItemById(playerData.ItemsId[playerData.EquippedArmorIndex]);
             player.EquipItem(armor);
         }
-        if (inventoryManager.EquippedHelmetIndex != -1)
+        if (player.HasHelmet())
         {
             Helmet helmet = (Helmet)FindItemById(playerData.ItemsId[playerData.EquippedHelmetIndex]);
             player.EquipItem(helmet);

@@ -1,9 +1,9 @@
 Fix:
 - enemy movement
 - potion in ability bar
-- Active player stats texts
 
 ADD:
+- player death screen
 - attribute points
 - ability points and upgrade abilities
 - ranged weapons (classes)
@@ -12,5 +12,10 @@ ADD:
 - item pickup animation
 - itemview, questView animation
 - log-in, register forms (database) ( save data every 5 min )
+
+
+- collectable
+- encrypt SaveGame
+- move getResource floating text with player
 
 https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
