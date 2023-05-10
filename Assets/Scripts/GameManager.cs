@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEditor;
+using System;
+using static UnityEditor.Progress;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,11 +11,12 @@ public class GameManager : MonoBehaviour
 
     //References
     private Player player;
-    private InventoryManager inventoryManager;
+    private Inventory inventory;
+    private InventoryUI inventoryUI;
     public FloatingTextManager floatingTextManager;
     public HUD hud;
 
-    private PlayerData playerData = new PlayerData();
+    private PlayerData playerData;
     private List<int> xpTable = new List<int>();
     private string saveFilePath;
 
@@ -32,16 +35,19 @@ public class GameManager : MonoBehaviour
             Destroy(hud.gameObject);
         }
     }
-
+    
     private void Start()
     {
         player = Player.instance;
-        inventoryManager = InventoryManager.instance;
+        inventory = Inventory.instance;
+        inventoryUI = InventoryUI.instance;
+        playerData = new PlayerData();
         CreateXpTable();
-        player.InitializePlayer();
-        playerData.InitializePlayerData();
-
+        player.Initialize();
+        inventory.Initialize();      
+        playerData.Initialize();       
         saveFilePath = Application.persistentDataPath + "/SaveGame.json";
+
         //File.Delete(saveFilePath);
         if (File.Exists(saveFilePath))
         {
@@ -98,18 +104,17 @@ public class GameManager : MonoBehaviour
         playerData.CritChance = player.CritChance;
         playerData.AttributePoints = player.AttributePoints;
 
-        // Inventory data
-        playerData.LastItem = inventoryManager.LastItem;
+        // Items data
         playerData.ItemsId.Clear();
-        for (int i = 0; i < inventoryManager.LastItem; i++)
+        for (int i = 0; i < inventory.Items.Count; i++)
         {
-            playerData.ItemsId.Add(player.Items[i].id);
+            Item item = inventory.Items[i];
+            playerData.ItemsId.Add(item.id);
         }
-
-        playerData.EquippedWeaponIndex = inventoryManager.EquippedWeaponIndex;
-        playerData.EquippedArmorIndex = inventoryManager.EquippedArmorIndex;
-        playerData.EquippedHelmetIndex = inventoryManager.EquippedHelmetIndex;
-
+        for (int i = 0; i < playerData.EquippedIndexes.Length; i++)
+        {
+            playerData.EquippedIndexes[i] = inventory.EquippedIndexes[i];
+        }
         // Write to file
         string json = JsonUtility.ToJson(playerData);
         File.WriteAllText(saveFilePath, json);
@@ -137,34 +142,40 @@ public class GameManager : MonoBehaviour
         player.CritChance = playerData.CritChance;
         player.AttributePoints = playerData.AttributePoints;
 
-        // Inventory data
-        inventoryManager.LastItem = playerData.LastItem;
-        inventoryManager.EquippedWeaponIndex = playerData.EquippedWeaponIndex;
-        inventoryManager.EquippedArmorIndex = playerData.EquippedArmorIndex;
-        inventoryManager.EquippedHelmetIndex = playerData.EquippedHelmetIndex;
-
         // Items data
-        for (int i = 0; i < playerData.LastItem; i++)
+        for (int i = 0; i < playerData.ItemsId.Count; i++)
         {
             Item item = FindItemById(playerData.ItemsId[i]);
-            player.Items[i] = Resources.Load<Item>("Items/" + item.name);
+            inventory.Items.Add(Resources.Load<Item>("Items/" + item.name));
         }
-        Weapon weapon = (Weapon)FindItemById(playerData.ItemsId[playerData.EquippedWeaponIndex]);
-        player.EquipItem(weapon);
-        if (player.HasArmor())
+        for (int i = 0; i < playerData.EquippedIndexes.Length; i++)
         {
-            Armor armor = (Armor)FindItemById(playerData.ItemsId[playerData.EquippedArmorIndex]);
-            player.EquipItem(armor);
+            inventory.EquippedIndexes[i] = playerData.EquippedIndexes[i];
+            int equippedIndex = inventory.EquippedIndexes[i];
+            if (equippedIndex != -1)
+                inventory.EquipItem(inventory.Items[equippedIndex], equippedIndex);
         }
-        if (player.HasHelmet())
-        {
-            Helmet helmet = (Helmet)FindItemById(playerData.ItemsId[playerData.EquippedHelmetIndex]);
-            player.EquipItem(helmet);
-        }
-
         DungeonManager.instance.SpawnPlayer();
-
     }
+
+    public Item FindItemById(int id)
+    {
+        UnityEngine.Object[] assets = Resources.LoadAll("Items/", typeof(ScriptableObject));
+        foreach (UnityEngine.Object asset in assets)
+        {
+            ScriptableObject scriptableObject = (ScriptableObject)asset;
+            SerializedObject serializedObject = new SerializedObject(scriptableObject);
+            SerializedProperty property = serializedObject.FindProperty("id");
+            if (property != null && property.intValue == id)
+            {
+                return (Item)scriptableObject;
+            }
+        }
+
+        Debug.Log("item null");
+        return null;
+    }
+
     private void StartNewGame()
     {
         playerData.ResetPlayerData();
@@ -181,22 +192,6 @@ public class GameManager : MonoBehaviour
         LoadGame();
     }
 
-    public Item FindItemById(int id)
-    {
-        Object[] assets = Resources.LoadAll("Items/", typeof(ScriptableObject));
-        foreach (Object asset in assets)
-        {
-            ScriptableObject scriptableObject = (ScriptableObject)asset;
-            SerializedObject serializedObject = new SerializedObject(scriptableObject);
-            SerializedProperty property = serializedObject.FindProperty("id");
-            if (property != null && property.intValue == id)
-            {
-                return (Item)scriptableObject;
-            }
-        }
-
-        return null;
-    }
 
 }
 

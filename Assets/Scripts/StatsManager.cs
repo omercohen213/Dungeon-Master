@@ -119,7 +119,7 @@ public class StatsManager : MonoBehaviour
 
         weaponImage.sprite = player.Weapon.itemSprite;
 
-        if (player.HasHelmet())
+        if (player.Helmet != null)
         {
             helmetImage.sprite = player.Helmet.itemSprite;
             var tempColor = helmetImage.color;
@@ -132,7 +132,7 @@ public class StatsManager : MonoBehaviour
             tempColor.a = 0;
             helmetImage.color = tempColor;
         }
-        if (player.HasArmor())
+        if (player.Armor != null)
         {
             armorImage.sprite = player.Armor.itemSprite;
             var tempColor = armorImage.color;

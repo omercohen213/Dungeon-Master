@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +6,8 @@ public class Enemy : Fighter, IDamageable
 {
     // Drops
     [SerializeField] private int xpAmount = 10;
-    [SerializeField] private GameObject itemDropPrefab;
+    [SerializeField] private List<Item> itemDrops = new List<Item>();
+    private ItemDropManager itemDropManager;
 
     // Logic
     [SerializeField] private int id;
@@ -23,13 +23,12 @@ public class Enemy : Fighter, IDamageable
     public int hp;
     public int maxHp;
     public int damage;
+    private readonly float respawnTimer = 3f;
 
     // Immunity 
     private const float DEFAULT_IMMUNE_TIME = 0.5f;
     protected float immuneTime;
     protected float lastImmune;
-
-    [SerializeField] private List<Item> itemDrops = new List<Item>();
 
     // Hitbox
     public ContactFilter2D filter;
@@ -46,8 +45,9 @@ public class Enemy : Fighter, IDamageable
     {
         base.Start();
         cam = Camera.main;
+        itemDropManager = GetComponent<ItemDropManager>();
 
-        // Initialize hp bar and text
+        // Initialize hp bitialize hp bar and text
         hpBar = transform.Find("HpBarCanvas/HpBarFrame/HpBar").GetComponent<RectTransform>();
         hpText = transform.Find("HpBarCanvas/HpBarFrame/HpText").GetComponent<Text>();
         hpBarFrame = transform.Find("HpBarCanvas/HpBarFrame").GetComponent<RectTransform>();
@@ -118,53 +118,17 @@ public class Enemy : Fighter, IDamageable
     public void onHpChange()
     {
         hpText.text = hp + " / " + maxHp;
-        float hpRatio = (float)hp / (float)maxHp;
+        float hpRatio = (float)hp / maxHp;
         hpBar.localScale = new Vector3(hpRatio, 1, 1);
     }
 
-    private void DropItem()
-    {
-        int rnd = Random.Range(0, 100);
-        itemDrops.Sort((item1, item2) => item1.dropRate.CompareTo(item2.dropRate)); // Sort the list by drop rate (ascending order)
-
-        // Drop the most rare item possible
-        if (rnd <= itemDrops[0].dropRate)
-            CreateItemDropGo(0);
-
-        float lastDropRate = itemDrops[0].dropRate;
-        for (int i = 1; i < itemDrops.Count; i++)
-        {
-            if (rnd >= itemDrops[i - 1].dropRate && rnd <= itemDrops[i].dropRate + lastDropRate)
-            {
-                CreateItemDropGo(i);
-                return;
-            }
-            else lastDropRate = itemDrops[i].dropRate;
-        }
-    }
-
-    // Create the item drop object and its components
-    private void CreateItemDropGo(int index)
-    {
-        Item item = itemDrops[index];
-        GameObject itemGo = Instantiate(itemDropPrefab);
-        itemGo.GetComponent<ItemManager>().item = item;
-        itemGo.GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-        itemGo.name = item.name;
-        itemGo.transform.position = transform.position;
-        itemGo.transform.localScale = item.spriteSize;
-        ItemManager.instance.DestroyItemDrop(); // Destroy object after a few seconds
-    }
-
+    // Respawn the enemy object after death
     private void Respawn()
     {
-        Enemy enemyClone = Instantiate(this);
-        enemyClone.name = name;
-        enemyClone.transform.position = startingPos;
-        enemyClone.hp = maxHp;
-        enemyClone.gameObject.SetActive(true);
-
-        Destroy(gameObject);
+        hp = maxHp;
+        onHpChange();
+        transform.position = startingPos;
+        gameObject.SetActive(true);
     }
 
     public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
@@ -191,12 +155,34 @@ public class Enemy : Fighter, IDamageable
         onHpChange();
     }
 
+    // Calculate which item the enemy should drop
+    public void DropItem()
+    {
+        int rnd = Random.Range(0, 100);
+        itemDrops.Sort((item1, item2) => item1.dropRate.CompareTo(item2.dropRate)); // Sort the list by drop rate (ascending order)
+
+        // Drop the most rare item possible
+        if (rnd <= itemDrops[0].dropRate)
+            itemDropManager.CreateItemDrop(itemDrops[0], transform.position);
+
+        float lastDropRate = itemDrops[0].dropRate;
+        for (int i = 1; i < itemDrops.Count; i++)
+        {
+            if (rnd >= itemDrops[i - 1].dropRate && rnd <= itemDrops[i].dropRate + lastDropRate)
+            {
+                itemDropManager.CreateItemDrop(itemDrops[i], transform.position);
+                return;
+            }
+            else lastDropRate = itemDrops[i].dropRate;
+        }
+    }
+
     public void Death()
     {
         gameObject.SetActive(false);
         player.GrantXp(xpAmount);
         DropItem();
-        Invoke("Respawn", 3);
+        Invoke("Respawn", respawnTimer);
         foreach (Quest quest in player.ActiveQuests)
         {
             if (quest.enemiesIds.Contains(id))

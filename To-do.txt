@@ -17,5 +17,11 @@ ADD:
 - collectable
 - encrypt SaveGame
 - move getResource floating text with player
+- try catch where needed
+- seperate itemManager, inventoryManager
+- enemy xp amount
 
-https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load system
+- check inventory drop 
+- chatgpt Enemy.OnEnemyDeath += DropEnemyItem;
+
+https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load systems

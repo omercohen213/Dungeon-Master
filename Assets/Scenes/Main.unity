@@ -1304,6 +1304,10 @@ PrefabInstance:
       propertyPath: damage
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 8187648105883431958, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
+      propertyPath: itemDropPrefab
+      value: 
+      objectReference: {fileID: 9183128663664778909, guid: 31bde36439503b54ea5421d71cf2e655, type: 3}
     - target: {fileID: 8187648105883431959, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1361,7 +1365,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 628875940}
     m_RemovedComponents:
-    - {fileID: 8187648105883431957, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: e74d6ad906ddeda44ac656a9d100a93e, type: 3}
 --- !u!114 &268671460 stripped
 MonoBehaviour:
@@ -15177,7 +15181,7 @@ PrefabInstance:
     - target: {fileID: 3356476575705622101, guid: 82f19f54431ea3247a4c410bc57d59f1, type: 3}
       propertyPath: emptyChest
       value: 
-      objectReference: {fileID: -753418325, guid: 54c1742ee51db714b8104aff90e8a12b, type: 3}
+      objectReference: {fileID: 858002449, guid: 94b0fcaa4dd229a48b13fa86d880faee, type: 3}
     - target: {fileID: 3356476575705622101, guid: 82f19f54431ea3247a4c410bc57d59f1, type: 3}
       propertyPath: goldAmount
       value: 25
@@ -18315,6 +18319,8 @@ GameObject:
   - component: {fileID: 2065085266}
   - component: {fileID: 2065085264}
   - component: {fileID: 2065085265}
+  - component: {fileID: 2065085267}
+  - component: {fileID: 2065085268}
   m_Layer: 5
   m_Name: Inventory
   m_TagString: Untagged
@@ -18396,17 +18402,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed0df3d76c0c1f54492747ea0affc377, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryExitButton: {fileID: 1052545765}
-  animator: {fileID: 2065085265}
   invItemPrefab: {fileID: 5079419331403518832, guid: 53b07b8a9e8bedb4aba82e64b65bd785, type: 3}
-  content: {fileID: 1016148348}
   ESignPrefab: {fileID: 3441757718069030872, guid: b540814a0d2b9bb439e64b245fd13fd3, type: 3}
+  animator: {fileID: 2065085265}
+  content: {fileID: 1016148348}
+  inventoryExitButton: {fileID: 1052545765}
   itemView: {fileID: 188245202}
   itemPreviewImage: {fileID: 768414981}
   itemDescriptionText: {fileID: 2078946990}
   equipButton: {fileID: 2076696310}
   dropButton: {fileID: 1609484343}
-  itemDropPrefab: {fileID: 9183128663664778909, guid: 31bde36439503b54ea5421d71cf2e655, type: 3}
 --- !u!95 &2065085265
 Animator:
   serializedVersion: 4
@@ -18457,6 +18462,31 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2065085267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065085258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6e5f5ece9cacf4583e8de0607f4d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemDropPrefab: {fileID: 9183128663664778909, guid: 31bde36439503b54ea5421d71cf2e655, type: 3}
+--- !u!114 &2065085268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065085258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a85b9cb6a91a5304bbd5359f0b8a9194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2076696309 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8263366260279406240, guid: 7a5ab07226b1026458004dce0832148d, type: 3}

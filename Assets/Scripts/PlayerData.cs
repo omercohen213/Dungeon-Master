@@ -38,22 +38,21 @@ public class PlayerData
     public int AttributePoints { get => attributePoints; set => attributePoints = value; }
 
     // Inventory items
-    [SerializeField] private List<int> itemsId;
+    [SerializeField] private List<int> itemsId; // Holds ids that will be loaded as items when loading data
     public List<int> ItemsId { get => itemsId; set => itemsId = value; }
 
-    [SerializeField] private int lastItem; // Number of items the player owns
-    [SerializeField] private int equippedWeaponIndex;
-    [SerializeField] private int equippedArmorIndex;
-    [SerializeField] private int equippedHelmetIndex;
-    public int LastItem { get => lastItem; set => lastItem = value; }
-    public int EquippedWeaponIndex { get => equippedWeaponIndex; set => equippedWeaponIndex = value; }
-    public int EquippedArmorIndex { get => equippedArmorIndex; set => equippedArmorIndex = value; }
-    public int EquippedHelmetIndex { get => equippedHelmetIndex; set => equippedHelmetIndex = value; }
+    [SerializeField] private int [] equippedIndexes; // Holds the equipped items indexes in the inventory in this order [weapon,helmet,armor]
+    public int[] EquippedIndexes { get => equippedIndexes; set => equippedIndexes = value; }
 
-    // On log-in
-    public void InitializePlayerData()
+
+    public void Initialize()
     {
         ItemsId = new List<int>();
+        equippedIndexes = new int[3];
+        for (int i = 0; i < equippedIndexes.Length; i++)
+        {
+            equippedIndexes[i] = -1;
+        }
     }
 
     // Reset player data to default starting data
@@ -78,11 +77,6 @@ public class PlayerData
         // Starting items
         Weapon startingWeapon = Resources.Load<Weapon>("Items/Ninja_Sword");
         ItemsId.Add(startingWeapon.id);
-
-        // Equipped items' index in the items array
-        EquippedWeaponIndex = 0;
-        EquippedArmorIndex = -1;
-        EquippedHelmetIndex = -1;
-        LastItem = 1;
+        equippedIndexes[0] = 0;
     }
 }

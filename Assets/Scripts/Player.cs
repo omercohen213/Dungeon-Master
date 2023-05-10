@@ -60,10 +60,6 @@ public class Player : Fighter, IDamageable
     protected float immuneTime = 1.0f;
     protected float lastImmune;
 
-    // Inventory
-    private Item[] items;
-    public Item[] Items { get => items; set => items = value; }
-
     private Weapon weapon;
     private Armor armor;
     private Helmet helmet;
@@ -171,44 +167,6 @@ public class Player : Fighter, IDamageable
         hud.onLevelChange();
     }
 
-    public void EquipItem(Item item)
-    {
-        switch (item.type)
-        {
-            case "Weapon":
-                Weapon weapon = (Weapon)item;
-                this.Weapon = weapon;
-                transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                break;
-            case "Armor":
-                Armor armor = (Armor)item;
-                this.Armor = armor;
-                transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                break;
-            case "Helmet":
-                Helmet helmet = (Helmet)item;
-                this.Helmet = helmet;
-                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
-                break;
-        }
-    }
-
-    public void UnequipItem(Item item)
-    {
-        switch (item.type)
-        {
-            // (Weapon cannot be unequipped)
-            case "Armor":
-                Armor = null;
-                transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = null;
-                break;
-            case "Helmet":
-                Helmet = null;
-                transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = null;
-                break;
-        }
-    }
-
     // Regenerate Hp and Mp with corresponding regen
     public void RegenerateHpAndMp()
     {
@@ -293,16 +251,7 @@ public class Player : Fighter, IDamageable
             }
         }
         hud.onHpChange();
-    }
-
-    public bool HasHelmet()
-    {
-        return (InventoryManager.instance.EquippedHelmetIndex != -1);
-    }
-    public bool HasArmor()
-    {
-        return (InventoryManager.instance.EquippedArmorIndex != -1);
-    }
+    }   
     // Return the total amount of defense including items
     public int GetTotalDefense()
     {
@@ -320,10 +269,10 @@ public class Player : Fighter, IDamageable
         return attackPower + weapon.attackPower;
     }
     // Initialize needed variables on game start
-    public void InitializePlayer()
+    public void Initialize()
     {
-        items = new Item[15];
         activeQuests = new List<Quest>();
+        weapon= null;
     }
     public void Death()
     {
