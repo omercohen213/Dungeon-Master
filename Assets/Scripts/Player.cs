@@ -1,16 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Player : Fighter, IDamageable
+public class Player : Fighter
 {
     public static Player instance;
-
-    private float speed = 2;
+    private HUD hud;
+    private GameManager gameManager;
 
     // Resources
     private int lvl;
@@ -45,20 +44,13 @@ public class Player : Fighter, IDamageable
     public string PlayerName { get => playerName; set => playerName = value; }
 
     // Hp and Mp regeneration
-    private float hpRegenTimer;
-    private float hpRegenDelay = 3f;
     private readonly int hpRegen = 10;
-    private float mpRegenTimer;
-    private float mpRegenDelay = 1f;
     private readonly int mpRegen = 5;
-    private float inCombatTimer;
-    private bool isInCombat = false;
+    private readonly float regenDelay = 3f;
     private readonly float inCombatDelay = 5f;
-    public bool IsInCombat {set => isInCombat = value; }
-
-    // Damage immunity 
-    protected float immuneTime = 1.0f;
-    protected float lastImmune;
+    private bool isInCombat = false;
+    public bool IsInCombat { set => isInCombat = value; }
+    private const float DAMAGE_DELAY_TIME = 0.1f;
 
     private Weapon weapon;
     private Armor armor;
@@ -73,10 +65,16 @@ public class Player : Fighter, IDamageable
     // Player Name
     private Camera cam;
     private GameObject playerNameGo;
-    [SerializeField] public Vector3 offset;
+    private readonly float nameOffset = -0.12f;
 
-    private HUD hud;
-    private GameManager gameManager;
+    public GameObject deathScreenPrefab;
+    public float deathTimer = 3.0f;
+
+    private GameObject shadowGo;
+
+    private float speed = 2;
+    private string facingDirection;
+    public string FacingDirection { get => facingDirection; set => facingDirection = value; }
 
     private void Awake()
     {
@@ -92,33 +90,96 @@ public class Player : Fighter, IDamageable
         SceneManager.sceneLoaded += OnSceneLoaded;
         playerNameGo = transform.Find("PlayerNameCanvas/PlayerName").gameObject;
         playerNameGo.GetComponent<Text>().text = playerName;
-        hpRegenTimer = 0;
-        mpRegenTimer = 0;
-        inCombatTimer = 0;
+        shadowGo = transform.Find("Shadow").gameObject;
+        StartCoroutine(RegenerateCoroutine());
+        damageDelay = DAMAGE_DELAY_TIME;
     }
 
     private void Update()
     {
-        Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
-        if (playerNameGo.transform.position != pos)
-            playerNameGo.transform.position = pos;
-        if (!isInCombat)
+        // arrow keys (returns 1/-1 on key down)
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
+        UpdateFacingDirection(horizontalInput, verticalInput);
+        UpdateMotor(new Vector3(horizontalInput, verticalInput, 0), speed);
+    }
+    public void Initialize()
+    {
+        activeQuests = new List<Quest>();
+    }
+
+    private IEnumerator RegenerateCoroutine()
+    {
+        while (true)
         {
-            RegenerateHpAndMp();
+            if (isInCombat)
+            {
+                yield return new WaitForSeconds(inCombatDelay);
+                isInCombat = false; // set isInCombat back to false after inCombatDelay
+            }
+            else
+            {
+                bool shouldRegenerateHp = hp < maxHp;
+                bool shouldRegenerateMp = mp < maxMp;
+
+                if (shouldRegenerateHp)
+                {
+                    // Regenerate HP
+                    hp += hpRegen;
+                    if (hp > maxHp)
+                    {
+                        hp = maxHp;
+                    }
+                    hud.onHpChange();
+                }
+
+                if (shouldRegenerateMp)
+                {
+                    // Regenerate MP
+                    mp += mpRegen;
+                    if (mp > maxMp)
+                    {
+                        mp = maxMp;
+                    }
+                    hud.onMpChange();
+                }
+
+                // Wait for the next regeneration tick
+                yield return new WaitForSeconds(regenDelay);
+            }
+        }
+
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 namePos = cam.WorldToScreenPoint(transform.position + new Vector3(0, nameOffset));
+        if (playerNameGo.transform.position != namePos)
+            playerNameGo.transform.position = namePos;
+    }
+    private void UpdateFacingDirection(float horizontal, float vertical)
+    {
+        Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+
+        if (inputDirection.magnitude == 0)
+        {
+            return;
+        }
+
+        if (Mathf.Abs(inputDirection.x) >= Mathf.Abs(inputDirection.y))
+        {
+            if (inputDirection.x > 0)
+                facingDirection = "Right";
+            else
+                facingDirection = "Left";
         }
         else
         {
-            UpdateCombatTimer();
+            if (inputDirection.y > 0)
+                facingDirection = "Up";
+            else
+                facingDirection = "Down";
         }
-    }   
-
-    private void FixedUpdate()
-    {
-        // arrow keys (returns 1/-1 on key down)
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-
-        UpdateMotor(new Vector3(x, y, 0), speed);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -167,75 +228,14 @@ public class Player : Fighter, IDamageable
         hud.onLevelChange();
     }
 
-    // Regenerate Hp and Mp with corresponding regen
-    public void RegenerateHpAndMp()
-    {
-        // Player is dead
-        /*if (hp <= 0)
-        {
-            return;
-        }*/
-
-        // Check if both hp and mp need to be regenerated
-        bool shouldRegenerateHp = hp < maxHp;
-        bool shouldRegenerateMp = mp < maxMp;
-
-        if (!shouldRegenerateHp && !shouldRegenerateMp)
-        {
-            return;
-        }
-
-        if (shouldRegenerateHp)
-        {
-            hpRegenTimer += Time.deltaTime;
-            if (hpRegenTimer >= hpRegenDelay)
-            {
-                hp += hpRegen;
-                if (hp > maxHp)
-                {
-                    hp = maxHp;
-                }
-                hud.onHpChange();
-                hpRegenTimer = 0f;
-            }
-        }
-
-        if (shouldRegenerateMp)
-        {
-            mpRegenTimer += Time.deltaTime;
-            if (mpRegenTimer >= mpRegenDelay)
-            {
-                mp += mpRegen;
-                if (mp > maxMp)
-                {
-                    mp = maxMp;
-                }
-                hud.onMpChange();
-                mpRegenTimer = 0f;
-            }
-        }
-    }
-
-    // Check if player stopped combat
-    private void UpdateCombatTimer()
-    {
-        inCombatTimer -= Time.deltaTime;
-        if (inCombatTimer <= 0f)
-        {
-            isInCombat = false;
-            inCombatTimer = 0f;
-        }
-    }
-  
     // Receive damage
-    public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
+    public override void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
     {
         isInCombat = true;
-        inCombatTimer = inCombatDelay;
 
-        if (Time.time - lastImmune > immuneTime)
+        if (Time.time - lastDamage > damageDelay)
         {
-            lastImmune = Time.time;
+            lastDamage = Time.time;
             if (damageAmount > 0)
             {
                 Hp -= damageAmount;
@@ -251,7 +251,7 @@ public class Player : Fighter, IDamageable
             }
         }
         hud.onHpChange();
-    }   
+    }
     // Return the total amount of defense including items
     public int GetTotalDefense()
     {
@@ -269,13 +269,96 @@ public class Player : Fighter, IDamageable
         return attackPower + weapon.attackPower;
     }
     // Initialize needed variables on game start
-    public void Initialize()
+    public override void Death()
     {
-        activeQuests = new List<Quest>();
-        weapon= null;
+        // Show the death screen
+        GameObject deathScreen = Instantiate(deathScreenPrefab);
+        deathScreen.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        deathScreen.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // Show the respawn text
+        GameObject respawnText = new GameObject("RespawnText");
+        respawnText.transform.SetParent(deathScreen.transform, false);
+        Text textComponent = respawnText.AddComponent<Text>();
+        textComponent.text = "Respawning in " + deathTimer.ToString("0") + "...";
+        textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        textComponent.color = Color.red;
+        textComponent.alignment = TextAnchor.MiddleCenter;
+        RectTransform textTransform = respawnText.GetComponent<RectTransform>();
+        textTransform.sizeDelta = new Vector2(400.0f, 50.0f);
+        textTransform.anchoredPosition = new Vector2(0.0f, 0.0f);
+
+        // Start the respawn timer
+        StartCoroutine(RespawnCoroutine(deathScreen, textComponent));
     }
-    public void Death()
+
+    private IEnumerator RespawnCoroutine(GameObject deathScreen, Text respawnText)
     {
-        Debug.Log("Dead");
+        float timer = 0.0f;
+        while (timer < deathTimer)
+        {
+            timer += Time.deltaTime;
+            respawnText.text = "Respawning in " + (deathTimer - timer).ToString("0") + "...";
+            yield return null;
+        }
+
+        // Destroy the death screen and respawn the player
+        Destroy(deathScreen);
+        SpawnPlayer();
+        hp = maxHp;
+        hud.onHpChange();
+    }
+
+    public void SpawnPlayer()
+    {
+        // Spawn point
+        RectTransform portalRectTransform = GameObject.Find("SpawnPoint").GetComponent<RectTransform>();
+        Transform portal = GameObject.Find("SpawnPoint").transform;
+        float portalWidth = portalRectTransform.rect.width * 0.16f;
+        float portalHeight = portalRectTransform.rect.height * 0.16f;
+        transform.position = portal.position + new Vector3(portalWidth, -portalHeight / 3, 0);
+    }
+
+    public override void GetKnockUp(float duration, float distance)
+    {
+        StartCoroutine(GetKnockUpCoroutine(duration, distance));
+    }
+
+    private IEnumerator GetKnockUpCoroutine(float duration, float distance)
+    {
+        float startTime = Time.time;
+        float peakTime = startTime + (duration / 2f);
+        float endTime = startTime + duration;
+
+        Vector3 startPosition = transform.position;
+        Vector3 peakPosition = startPosition + (Vector3.up * distance);
+        Vector3 endPosition = startPosition;
+
+        Vector3 shadowPos = shadowGo.transform.position;
+        while (Time.time < endTime)
+        {
+            float t = (Time.time - startTime) / duration;
+            if (Time.time <= peakTime)
+            {
+                transform.position = Vector3.Lerp(startPosition, peakPosition, t * 2f);
+                float shadowScale = Mathf.Lerp(0.05f, 0.01f, t * 2f);
+                shadowGo.transform.localScale = new Vector3(shadowScale, shadowScale / 5, 1f);
+                shadowGo.transform.position = shadowPos;
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(peakPosition, endPosition, (t - 0.5f) * 2f);
+                float shadowScale = Mathf.Lerp(0.01f, 0.05f, (t - 0.5f) * 2f);
+                shadowGo.transform.localScale = new Vector3(shadowScale, shadowScale / 5, 1f);
+                shadowGo.transform.position = shadowPos;
+            }
+            yield return null;
+        }
+    }
+
+    // Check if given damage is enough to kill player
+    public override bool IsDamageToKill(float damage)
+    {
+        return damage > hp;
     }
 }

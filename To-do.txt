@@ -1,27 +1,26 @@
 Fix:
 - enemy movement
 - potion in ability bar
+- player stats button
+- player death screen
+- move hp up to fighter
+- change wait for hit to just wait time
+- aatrox q ramping dmg on parts
+- move aatrox q to a different script
 
 ADD:
-- player death screen
-- attribute points
+- aatrox e
 - ability points and upgrade abilities
 - ranged weapons (classes)
 - attcking pets
 - shop
 - item pickup animation
-- itemview, questView animation
-- log-in, register forms (database) ( save data every 5 min )
+- xp gain with image
 
-
-- collectable
 - encrypt SaveGame
 - move getResource floating text with player
 - try catch where needed
-- seperate itemManager, inventoryManager
 - enemy xp amount
 
-- check inventory drop 
-- chatgpt Enemy.OnEnemyDeath += DropEnemyItem;
 
 https://www.reddit.com/r/MMORPG/comments/5ap5a8/how_does_an_mmorpg_save/  save/load systems

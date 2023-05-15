@@ -1,51 +1,50 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Enemy : Fighter, IDamageable
+public class Enemy : Fighter
 {
     // Drops
+    private ItemDropManager itemDropManager;
     [SerializeField] private int xpAmount = 10;
     [SerializeField] private List<Item> itemDrops = new List<Item>();
-    private ItemDropManager itemDropManager;
 
     // Logic
     [SerializeField] private int id;
+    [SerializeField] private string enemyName;
     private Player player;
     public float triggerLength = 1;
     public float chaseLength = 5;
     public float chaseSpeed = 1.5f;
     public float returnSpeed = 3.0f;
-    private bool chasing;
-    private bool collidingWithPlayer;
-    private Transform playerTransform;
+    private bool isChasing;
+    private bool isCollidingWithPlayer;
     private Vector3 startingPos;
     public int hp;
     public int maxHp;
     public int damage;
     private readonly float respawnTimer = 3f;
-
-    // Immunity 
-    private const float DEFAULT_IMMUNE_TIME = 0.5f;
-    protected float immuneTime;
-    protected float lastImmune;
+    private const float AA_DAMAGE_DELAY_TIME = 0.5f;
+    private const float ABILITY_DAMAGE_DELAY_TIME = 0.1f;
 
     // Hitbox
     public ContactFilter2D filter;
-    private Collider2D[] hits = new Collider2D[10];
+    private readonly Collider2D[] hits = new Collider2D[10];    
 
-    // Hp Bar
+    // Name and hp Bar
+    private readonly float offset = 0.12f;
     private RectTransform hpBarFrame;
     private RectTransform hpBar;
     private Text hpText;
-    [SerializeField] private Vector3 offset;
+    private GameObject enemyNameGo;
     private Camera cam;
 
     protected override void Start()
     {
         base.Start();
         cam = Camera.main;
-        itemDropManager = GetComponent<ItemDropManager>();
+        itemDropManager = ItemDropManager.instance;
 
         // Initialize hp bitialize hp bar and text
         hpBar = transform.Find("HpBarCanvas/HpBarFrame/HpBar").GetComponent<RectTransform>();
@@ -57,48 +56,54 @@ public class Enemy : Fighter, IDamageable
 
         // Player
         player = GameObject.Find("Player").GetComponent<Player>();
-        playerTransform = player.transform;
         startingPos = transform.position;
+        enemyNameGo = transform.Find("EnemyNameCanvas/EnemyName").gameObject;
+        enemyNameGo.GetComponent<Text>().text = enemyName;
+        enemyNameGo.GetComponent<Text>().color = Color.red;
     }
 
     private void Update()
     {
-        Vector3 pos = cam.WorldToScreenPoint(transform.position + offset);
-        if (hpBarFrame.transform.position != pos)
-            hpBarFrame.transform.position = pos;
+        Vector3 namePos = cam.WorldToScreenPoint(transform.position + new Vector3(0, offset));
+        if (enemyNameGo.transform.position != namePos)
+            enemyNameGo.transform.position = namePos;
 
-        if (AbilitiesManager.instance.isAbility1Active())
-            immuneTime = 0.1f;
+        Vector3 hpBarPos = cam.WorldToScreenPoint(transform.position + new Vector3(0, -offset));
+        if (hpBarFrame.transform.position != hpBarPos)
+            hpBarFrame.transform.position = hpBarPos;
+
+        if (AbilitiesManager.instance.IsAbilityActive("GarenE"))       
+            damageDelay = ABILITY_DAMAGE_DELAY_TIME;
         else
-            immuneTime = DEFAULT_IMMUNE_TIME;
+        damageDelay = AA_DAMAGE_DELAY_TIME;
     }
 
     private void FixedUpdate()
     {
         // Is player in chasing range?
-        if (Vector3.Distance(startingPos, playerTransform.position) < chaseLength)
+        if (Vector3.Distance(startingPos, player.transform.position) < chaseLength)
         {
-            if (!chasing)
+            if (!isChasing)
                 UpdateMotor(startingPos - transform.position, returnSpeed); // Go back to the starting position
 
             // Is player in trigger range?
-            if (Vector3.Distance(startingPos, playerTransform.position) < triggerLength)
-                chasing = true;
+            if (Vector3.Distance(startingPos, player.transform.position) < triggerLength)
+                isChasing = true;
 
-            if (chasing)
-                if (!collidingWithPlayer)
-                    UpdateMotor((0.75f * playerTransform.position - transform.position).normalized, chaseSpeed); // Go to player
+            if (isChasing)
+                if (!isCollidingWithPlayer)
+                    UpdateMotor((0.75f * player.transform.position - transform.position).normalized, chaseSpeed); // Go to player
                 else UpdateMotor(startingPos - transform.position, returnSpeed); // Go back to the starting position
         }
         else
         {
             // Player is not in range anymore, go back to the starting position                   
             UpdateMotor(startingPos - transform.position, returnSpeed);
-            chasing = false;
+            isChasing = false;
         }
 
         // Check for overlaps
-        collidingWithPlayer = false;
+        isCollidingWithPlayer = false;
 
         // Collision work
         boxCollider.OverlapCollider(filter, hits);
@@ -108,14 +113,14 @@ public class Enemy : Fighter, IDamageable
                 continue;
 
             if (hits[i].tag == "Fighter" && hits[i].name == "Player")
-                collidingWithPlayer = true;
+                isCollidingWithPlayer = true;
 
             // Array is not cleaned up so we do it by ourselves
             hits[i] = null;
         }
     }
 
-    public void onHpChange()
+    public void OnHpChange()
     {
         hpText.text = hp + " / " + maxHp;
         float hpRatio = (float)hp / maxHp;
@@ -126,18 +131,17 @@ public class Enemy : Fighter, IDamageable
     private void Respawn()
     {
         hp = maxHp;
-        onHpChange();
+        OnHpChange();
         transform.position = startingPos;
         gameObject.SetActive(true);
     }
 
-    public void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
+    public override void ReceiveDamage(int damageAmount, float pushForce, Vector3 origin)
     {
         player.IsInCombat = true;
-        if (Time.time - lastImmune > immuneTime)
+        if (Time.time - lastDamage > damageDelay)
         {
-
-            lastImmune = Time.time;
+            lastDamage = Time.time;
             if (damageAmount > 0)
             {
                 hp -= damageAmount;
@@ -152,8 +156,8 @@ public class Enemy : Fighter, IDamageable
                 Death();
             }
         }
-        onHpChange();
-    }
+        OnHpChange();
+    }  
 
     // Calculate which item the enemy should drop
     public void DropItem()
@@ -177,16 +181,23 @@ public class Enemy : Fighter, IDamageable
         }
     }
 
-    public void Death()
+    public override void Death()
     {
         gameObject.SetActive(false);
         player.GrantXp(xpAmount);
         DropItem();
-        Invoke("Respawn", respawnTimer);
+        Invoke(nameof(Respawn), respawnTimer);
         foreach (Quest quest in player.ActiveQuests)
         {
             if (quest.enemiesIds.Contains(id))
                 QuestManager.instance.UpdateActiveQuest(quest);
         }
+    }    
+
+    // Check if given damage is enough to kill enemy
+    public override bool IsDamageToKill(float damage)
+    {
+        return damage > hp;
     }
 }
+

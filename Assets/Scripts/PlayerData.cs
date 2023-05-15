@@ -57,7 +57,7 @@ public class PlayerData
 
     // Reset player data to default starting data
     public void ResetPlayerData()
-    {
+    {       
         // Resources
         gold = 0;
         xp = 0;

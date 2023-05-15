@@ -61,7 +61,7 @@ public class StatsManager : MonoBehaviour
                 break;
             // Ability power
             case "AttributeButton 3":
-                player.AbilityPower += 1;
+                player.AbilityPower += 10;
                 break;
             // Defense
             case "AttributeButton 4":
@@ -154,14 +154,13 @@ public class StatsManager : MonoBehaviour
         LoadCharachterSprite();
         UpdatePlayerStats();
 
-        /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("Inventory_closed"))
+        /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("Stats_closed"))
         {
-            UpdateInventory();
+            UpdatePlayerStats();
             animator.SetTrigger("open");
-            itemView.SetActive(false);
         }
 
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Inventory_opened"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Stats_opened"))
             animator.SetTrigger("close");*/
     }
 }

@@ -2,19 +2,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEditor;
-using System;
-using static UnityEditor.Progress;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
     //References
-    private Player player;
-    private Inventory inventory;
-    private InventoryUI inventoryUI;
-    public FloatingTextManager floatingTextManager;
-    public HUD hud;
+    [SerializeField] private Player player;
+    [SerializeField] private Inventory inventory;
+    [SerializeField] private FloatingTextManager floatingTextManager;
+    [SerializeField] private HUD hud;
 
     private PlayerData playerData;
     private List<int> xpTable = new List<int>();
@@ -38,14 +36,11 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        player = Player.instance;
-        inventory = Inventory.instance;
-        inventoryUI = InventoryUI.instance;
         playerData = new PlayerData();
         CreateXpTable();
         player.Initialize();
         inventory.Initialize();      
-        playerData.Initialize();       
+        playerData.Initialize();     
         saveFilePath = Application.persistentDataPath + "/SaveGame.json";
 
         //File.Delete(saveFilePath);
@@ -141,6 +136,7 @@ public class GameManager : MonoBehaviour
         player.MagicResist = playerData.MagicResist;
         player.CritChance = playerData.CritChance;
         player.AttributePoints = playerData.AttributePoints;
+        player.transform.Find("PlayerNameCanvas/PlayerName").GetComponent<Text>().text = player.PlayerName;
 
         // Items data
         for (int i = 0; i < playerData.ItemsId.Count; i++)
@@ -148,20 +144,22 @@ public class GameManager : MonoBehaviour
             Item item = FindItemById(playerData.ItemsId[i]);
             inventory.Items.Add(Resources.Load<Item>("Items/" + item.name));
         }
+      
         for (int i = 0; i < playerData.EquippedIndexes.Length; i++)
         {
             inventory.EquippedIndexes[i] = playerData.EquippedIndexes[i];
-            int equippedIndex = inventory.EquippedIndexes[i];
-            if (equippedIndex != -1)
-                inventory.EquipItem(inventory.Items[equippedIndex], equippedIndex);
+            int equippedIndex = playerData.EquippedIndexes[i];
+            if (equippedIndex != -1) { 
+                inventory.EquipItemNoSave(inventory.Items[equippedIndex], equippedIndex);
+            }
         }
         DungeonManager.instance.SpawnPlayer();
     }
 
     public Item FindItemById(int id)
     {
-        UnityEngine.Object[] assets = Resources.LoadAll("Items/", typeof(ScriptableObject));
-        foreach (UnityEngine.Object asset in assets)
+        Object[] assets = Resources.LoadAll("Items/", typeof(ScriptableObject));
+        foreach (Object asset in assets)
         {
             ScriptableObject scriptableObject = (ScriptableObject)asset;
             SerializedObject serializedObject = new SerializedObject(scriptableObject);

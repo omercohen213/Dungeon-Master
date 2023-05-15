@@ -1,14 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemDropManager : MonoBehaviour
 {
-    [SerializeField] private GameObject itemDropPrefab;
+    public static ItemDropManager instance;
     GameObject itemDropObj;
+    [SerializeField] private GameObject itemDropPrefab;
 
-    private IEnumerator coroutine;
     private readonly float timeBeforeDestroyed = 10f;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Create the item drop object and its components
     public void CreateItemDrop(Item item, Vector3 position)
@@ -17,21 +21,14 @@ public class ItemDropManager : MonoBehaviour
         itemDropObj.GetComponent<SpriteRenderer>().sprite = item.itemSprite;
         itemDropObj.name = item.name;
         itemDropObj.transform.localScale = item.spriteSize;
-        itemDropObj.GetComponent<ItemDrop>().Item = item;        
-        //DestroyItemDrop();
+        itemDropObj.GetComponent<ItemDrop>().Item = item;
+        StartCoroutine(DestroyItemDrop(timeBeforeDestroyed));
     }
    
-
     // Destroy item gameObject after dropped
     private IEnumerator DestroyItemDrop(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         Destroy(itemDropObj);
-    }
-    public IEnumerator DestroyItemDrop()
-    {
-        coroutine = DestroyItemDrop(timeBeforeDestroyed);
-        StartCoroutine(coroutine);
-        return DestroyItemDrop(timeBeforeDestroyed);
     }
 }

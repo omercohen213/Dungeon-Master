@@ -17,7 +17,7 @@ public class Inventory : MonoBehaviour
     private List<Item> items;
     public List<Item> Items { get => items; set => items = value; }
 
-    private int[] equippedIndexes; // Holds the equipped items indexes in the inventory
+    [SerializeField] private int[] equippedIndexes; // Holds the equipped items indexes in the inventory
     public int[] EquippedIndexes { get => equippedIndexes; set => equippedIndexes = value; }
 
     private void Awake()
@@ -28,7 +28,21 @@ public class Inventory : MonoBehaviour
     {
         player = Player.instance;
         gameManager = GameManager.instance;
-        itemDropManager = GetComponent<ItemDropManager>();
+        itemDropManager = ItemDropManager.instance;
+    }
+
+    // Equip item without save for GameManager.Load()
+    public void EquipItemNoSave(Item item, int index)
+    {
+        switch (item.type)
+        {
+            case "Weapon":
+                EquipWeapon(item, index); break;
+            case "Helmet":
+                EquipHelmet(item, index); break;
+            case "Armor":
+                EquipArmor(item, index); break;
+        }
     }
 
     // Checks item type and equips the corresponding one in given index
@@ -38,10 +52,10 @@ public class Inventory : MonoBehaviour
         {
             case "Weapon":
                 EquipWeapon(item, index); break;
-            case "Armor":
-                EquipArmor(item, index); break;
             case "Helmet":
                 EquipHelmet(item, index); break;
+            case "Armor":
+                EquipArmor(item, index); break;
         }
         gameManager.SaveGame();
     }
@@ -53,10 +67,10 @@ public class Inventory : MonoBehaviour
             Debug.Log("Not a weapon");
             return;
         }
+
         player.transform.Find("Weapon").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
         player.Weapon = item as Weapon;
-        if (item != null)
-            equippedIndexes[0] = index;
+        equippedIndexes[0] = index;
     }
     public void EquipHelmet(Item item, int index)
     {
@@ -67,8 +81,7 @@ public class Inventory : MonoBehaviour
         }
         player.transform.Find("Helmet").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
         player.Helmet = item as Helmet;
-        if (item != null)
-            equippedIndexes[1] = index;      
+        equippedIndexes[1] = index;
     }
 
     public void EquipArmor(Item item, int index)
@@ -80,8 +93,7 @@ public class Inventory : MonoBehaviour
         }
         player.transform.Find("Armor").GetComponent<SpriteRenderer>().sprite = item.itemSprite;
         player.Armor = item as Armor;
-        if (item != null)
-            equippedIndexes[2] = index;
+        equippedIndexes[2] = index;
     }
 
     // Checks item type and unequips the corresponding
@@ -153,9 +165,5 @@ public class Inventory : MonoBehaviour
     {
         items = new List<Item>();
         equippedIndexes = new int[3];
-        for (int i = 0; i < equippedIndexes.Length; i++)
-        {
-            equippedIndexes[i] = -1;
-        }
     }
 }

@@ -10,7 +10,8 @@ public class Ability: MonoBehaviour
     public bool isCd = false;
     public float animationTime;
     public bool isAnimationActive = false;
-
+    public float timeBeforeDestroyed;
+    public KeyCode keyCode;
     public Image abilityCdImage;
     public Text abilityCdText;
 

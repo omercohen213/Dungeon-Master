@@ -3,6 +3,9 @@ using UnityEngine;
 public class WeaponHitbox : Collidable
 {
     private Player player;
+    private bool hitVFXInstantiated = false;
+    private readonly float hitVFXScale = 0.1f;
+
 
     protected override void Start()
     {
@@ -12,7 +15,7 @@ public class WeaponHitbox : Collidable
 
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Fighter")
+        if (coll.CompareTag("Fighter"))
         {
             if (coll.name == "Player")
                 return;
@@ -22,9 +25,16 @@ public class WeaponHitbox : Collidable
             float pushForce = player.Weapon.pushForce;
             Vector3 origin = transform.position;
 
+            Fighter fighter = coll.GetComponent<Fighter>();
+            if (!hitVFXInstantiated)
+            {
+                fighter.ShowHitVFX(origin, hitVFXScale, coll.transform);
+                hitVFXInstantiated = true;
+            }
+            hitVFXInstantiated = false;
+
             IDamageable damageable = coll.gameObject.GetComponent<IDamageable>();
             damageable.ReceiveDamage(damageAmount, pushForce, origin);
         }
-
     }
 }
